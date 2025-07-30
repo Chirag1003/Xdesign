@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import TilePanel from "../components/TilePanel";
 import Toast from "../components/Toast";
+import SharePopup from "../components/SharePopup";
 import removed from "../assets/removed.png"; // Assuming you have an image for branding
 import timber from "../assets/timber rem.png"; // Assuming you have an image for branding
 export default function Home() {
@@ -25,6 +26,7 @@ export default function Home() {
   const [showFAQ, setShowFAQ] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [showInquiry, setShowInquiry] = useState(false);
+  const [showSharePopup, setShowSharePopup] = useState(false);
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   const [showUnsavedModal, setShowUnsavedModal] = useState(false);
   const [fullPreview, setFullPreview] = useState(false); // New state for full preview
@@ -41,7 +43,7 @@ export default function Home() {
   };
 
   const handleShare = () => {
-    showToast("Share Link Copied  ", "Share initiated for demonstration.");
+    setShowSharePopup(true);
   };
 
   const handleLayerConfirmed = () => {
@@ -160,7 +162,7 @@ const toggleFullPreview = () => {
           {!showTiles && (
             <button
               onClick={() => setShowTiles(true)}
-              className="absolute bottom-6 left-8 border-2 border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 text-white pt-[0.65rem] pr-[0.65rem] pb-[0.65rem] pl-[.55rem] rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors duration-200"
+              className="absolute bottom-6 left-8 flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
               title="Edit Kitchen"
             >
               <svg
@@ -176,6 +178,7 @@ const toggleFullPreview = () => {
                   clipRule="evenodd"
                 />
               </svg>
+              Edit
             </button>
           )}
 
@@ -207,17 +210,19 @@ const toggleFullPreview = () => {
                 {/* Back button */}
                 <button
                   onClick={() => setShowTiles(false)}
-                  className="border-2 border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 text-white pt-[0.65rem] pr-[0.65rem] pb-[0.65rem] pl-[.55rem] rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors duration-200"
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
                   title="Back"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                   </svg>
+                  Back
                 </button>
                 {/* Save Kitchen button */}
                 <button
                   onClick={handleSaveBathroom}
-                  className="border-2 bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200 text-white px-4 py-2 rounded-full flex items-center gap-2 border-white"
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
+                  title="Save Kitchen"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -230,7 +235,8 @@ const toggleFullPreview = () => {
                       d="M16.707 5.293a1 1 0 010 1.414L8.414 15l-4.121-4.121a1 1 0 011.414-1.414L8.414 12.172l7.293-7.293a1 1 0 011.414 0z"
                       clipRule="evenodd"
                     />
-                  </svg> Save Kitchen
+                  </svg>
+                  Save Kitchen
                 </button>
               </div>
             </>
@@ -273,6 +279,12 @@ const toggleFullPreview = () => {
                   </svg>
                   Share
                 </button>
+      {/* Share Popup Modal */}
+      <SharePopup
+        isOpen={showSharePopup}
+        onClose={() => setShowSharePopup(false)}
+        url={window.location.href}
+      />
                 {showDownload && (
                   <button
                     onClick={handleDownloadImage}
@@ -354,7 +366,7 @@ const toggleFullPreview = () => {
           <div className="absolute top-0 left-0 bg-[#00000047] px-4 py-2 rounded-lg shadow border border-white/20 backdrop-blur-sm flex items-center gap-2 text-white text-xs">
  <img src={timber}
    alt="Powered by Biorev Studio"
-   className="w-28 opacity-90 rounded" /></div>
+   className="w-32 opacity-90 rounded" /></div>
  <div className="absolute bottom-0 right-0 bg-[#00000047] px-4 py-2 rounded-lg shadow border border-white/20 backdrop-blur-sm flex items-center gap-2 text-white text-xs">
  {/* <img src={timber}
    alt="Powered by Biorev Studio"
@@ -364,7 +376,7 @@ const toggleFullPreview = () => {
  <img
    src={removed}
    alt="Powered by Biorev Studio"
-   className="w-28 opacity-90 rounded"
+   className="w-24 opacity-90 rounded"
  />
 </div>
 
