@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "lucide-react": "^0.536.0",
     "react": "^19.1.0",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.3",
     "react-share": "^5.2.2",
