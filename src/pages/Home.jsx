@@ -6,6 +6,7 @@ import SharePopup from "../components/SharePopup";
 import removed from "../assets/removed.png"; // Assuming you have an image for branding
 import timber from "../assets/timber rem.png"; // Assuming you have an image for branding
 export default function Home() {
+  const [autoFocusOn, setAutoFocusOn] = useState(false); // Auto Focus toggle state
   React.useEffect(() => {
     const handleFullscreenChange = () => {
       if (!document.fullscreenElement) {
@@ -301,7 +302,7 @@ const toggleFullPreview = () => {
             )}
             {(showTiles && !showUndoRedo) && (
               <>
-               <button
+                <button
                   onClick={toggleFullPreview}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
                   title="Full Preview"
@@ -311,6 +312,19 @@ const toggleFullPreview = () => {
                   </svg>
                   Preview
                 </button>
+                {/* Auto Focus Toggle Button */}
+                <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200">
+  <span className="text-white font-semibold text-base">Auto Focus :</span>
+  <button
+    onClick={() => setAutoFocusOn(prev => !prev)}
+    className={`relative inline-flex items-center h-6 w-11 rounded-full transition-colors duration-300 ${autoFocusOn ? 'bg-green-500' : 'bg-gray-400'}`}
+    title={`Toggle Auto Focus`}
+  >
+    <span
+      className={`inline-block w-5 h-5 transform bg-white rounded-full shadow-md transition-transform duration-300 ${autoFocusOn ? 'translate-x-5' : 'translate-x-1'}`}
+    />
+  </button>
+</div>
                 <button
                   onClick={() => setShowFAQ(true)}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
