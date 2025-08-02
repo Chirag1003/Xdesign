@@ -403,6 +403,7 @@ const TilePanel = ({ showToast, onLayerConfirmed }) => {
   const [editValue, setEditValue] = useState("");
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [dropIndex, setDropIndex] = useState(null);
+  const [editImage, setEditImage] = useState(null);
   const tilesContainerRef = useRef(null);
   const editingRef = useRef(null);
 
@@ -749,18 +750,38 @@ const TilePanel = ({ showToast, onLayerConfirmed }) => {
                   onChange={(e) => setEditValue(e.target.value)}
                   onKeyDown={handleKeyDown}
                 />
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="w-full text-sm px-2 py-1 rounded bg-white border border-slate-300"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (ev) => {
+                        setEditImage(ev.target.result);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+                {editImage && (
+                  <img src={editImage} alt="Preview" className="w-16 h-16 object-cover rounded mx-auto" />
+                )}
                 <button
                   className="w-full py-1 px-2 bg-blue-500 hover:bg-blue-600 text-white rounded shadow"
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (editLabel.trim() && editValue.trim()) {
+                    if (editLabel.trim() && editValue.trim() && editImage) {
                       setDesignOptions(prev => [
                         ...prev,
-                        { label: editLabel.trim(), value: editValue.trim() }
+                        { label: editLabel.trim(), value: editValue.trim(), image: editImage }
                       ]);
                       setEditingIndex(null);
+                      setEditImage(null);
                     }
                   }}
+                  disabled={!(editLabel.trim() && editValue.trim() && editImage)}
                 >
                   Add
                 </button>
