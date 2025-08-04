@@ -205,7 +205,10 @@ const toggleFullPreview = () => {
             <>
               {/* Cross (close) button */}
               <button
-                onClick={handleHomeClose}
+                onClick={() => {
+                  setAutoFocusOn(false);
+                  handleHomeClose();
+                }}
                 className="absolute top-6 right-6 bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-700 p-2 rounded-full shadow"
                 title="Close"
               >
@@ -228,6 +231,7 @@ const toggleFullPreview = () => {
                 setShowTiles(false);
                 setShowUndoRedo(false);
                 setTileSelected(false);
+                setAutoFocusOn(false);
               }}
               className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
               title="Back"
