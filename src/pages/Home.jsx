@@ -369,9 +369,9 @@ const toggleFullPreview = () => {
                   </svg>
                   Preview
                 </button>
-                {/* Auto Focus Toggle Button */}
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200">
-                  <span className="text-white font-semibold text-base">Auto Focus :</span>
+                {/* Auto Focus Toggle Button - moved to top right and higher z-index */}
+                <div className="fixed  right-[-9.2rem] z-[100] flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200">
+                  <span className="text-white font-semibold text-base">Focus:</span>
                   <button
                     onClick={() => setAutoFocusOn(prev => !prev)}
                     className={`relative inline-flex items-center h-6 w-11 rounded-full transition-colors duration-300 ${autoFocusOn ? 'bg-green-500' : 'bg-gray-400'}`}
@@ -405,6 +405,7 @@ const toggleFullPreview = () => {
                 </button>
               </>
             )}
+            
             {/* After confirming selection: Undo/Redo visible */}
             {showUndoRedo && (
               <>

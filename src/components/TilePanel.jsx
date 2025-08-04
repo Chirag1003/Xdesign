@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Pencil } from "lucide-react";
 import MaterialPanel from "./MaterialPanel";
 
-const TilePanel = ({ showToast, onLayerConfirmed }) => {
+const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected }) => {
   // Initial data setup
   const initialOptions = [
     { label: "Cabinets", value: "Avalon Painted White" },
@@ -259,7 +259,10 @@ const TilePanel = ({ showToast, onLayerConfirmed }) => {
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
               onClick={() => {
-                if (editingIndex !== index) setActiveIndex(index);
+                if (editingIndex !== index) {
+                  setActiveIndex(index);
+                  if (typeof onTileSelected === "function") onTileSelected();
+                }
               }}
               style={{
                 transition: "all 0.3s ease",
