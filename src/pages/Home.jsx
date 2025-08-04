@@ -7,6 +7,7 @@ import removed from "../assets/removed.png"; // Assuming you have an image for b
 import timber from "../assets/timber rem.png"; // Assuming you have an image for branding
 export default function Home() {
   const [autoFocusOn, setAutoFocusOn] = useState(false); // Auto Focus toggle state
+  const [tileSelected, setTileSelected] = useState(false); // Track if a tile is selected but not confirmed
   React.useEffect(() => {
     const handleFullscreenChange = () => {
       if (!document.fullscreenElement) {
@@ -47,11 +48,18 @@ export default function Home() {
     setShowSharePopup(true);
   };
 
+  // Called when a tile is selected (not confirmed)
+  const handleTileSelected = () => {
+    setTileSelected(true);
+  };
+
+  // Called when user confirms selection
   const handleLayerConfirmed = () => {
     setUnsavedChanges(true);
     setShowUndoRedo(true);
     setChangeHistory(prev => [...prev, 'change']); // Placeholder for actual change
     setRedoHistory([]);
+    setTileSelected(false); // Reset tileSelected after confirmation
     showToast('Changes Applied!', '1 tile(s) have been applied to your design.');
   };
 
@@ -60,6 +68,8 @@ export default function Home() {
       setShowUnsavedModal(true);
     } else {
       setShowTiles(false);
+      setShowUndoRedo(false);
+      setTileSelected(false);
     }
   };
 
@@ -68,6 +78,7 @@ export default function Home() {
     setUnsavedChanges(false);
     setShowTiles(false);
     setShowUndoRedo(false); // Hide undo/redo after save & close
+    setTileSelected(false);
     showToast('Saved', 'Your changes have been saved.');
   };
 
@@ -76,6 +87,7 @@ export default function Home() {
     setUnsavedChanges(false);
     setShowTiles(false);
     setShowUndoRedo(false);
+    setTileSelected(false);
     showToast('Layers are not applied to the design.', '', 'error');
   };
 
@@ -86,6 +98,7 @@ export default function Home() {
     setChangeHistory([]);
     setRedoHistory([]);
     setShowDownload(true);
+    setTileSelected(false);
     showToast('Layers are updated to your SOHO Kitchen.');
   };
   const handleUndo = () => {
@@ -207,47 +220,51 @@ const toggleFullPreview = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
-              {/* Back and Save Kitchen buttons side by side */}
-              <div className="absolute bottom-6 left-8 flex items-center gap-4 z-40">
-                {/* Back button */}
-                <button
-                  onClick={() => setShowTiles(false)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
-                  title="Back"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                  </svg>
-                  Back
-                </button>
-                {/* Save Kitchen button */}
-                <button
-                  onClick={handleSaveBathroom}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
-                  title="Save Kitchen"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-white"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414L8.414 15l-4.121-4.121a1 1 0 011.414-1.414L8.414 12.172l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Save Kitchen
-                </button>
-              </div>
+          {/* Back and Save Kitchen buttons side by side */}
+          <div className="absolute bottom-6 left-8 flex items-center gap-4 z-40">
+            {/* Back button */}
+            <button
+              onClick={() => {
+                setShowTiles(false);
+                setShowUndoRedo(false);
+                setTileSelected(false);
+              }}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
+              title="Back"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+              Back
+            </button>
+            {/* Save Kitchen button */}
+            <button
+              onClick={handleSaveBathroom}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
+              title="Save Kitchen"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 text-white"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414L8.414 15l-4.121-4.121a1 1 0 011.414-1.414L8.414 12.172l7.293-7.293a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Save Kitchen
+            </button>
+          </div>
             </>
           )}
 
           {/* Bottom center: All other action buttons */}
           <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-4 z-40">
-            {/* Action buttons beside Save Kitchen */}
-            {(!showTiles && !showUndoRedo) && (
+            {/* Home screen: all buttons visible */}
+            {(!showTiles && !showUndoRedo && !tileSelected) && (
               <>
                 <button
                   onClick={toggleFullPreview}
@@ -301,7 +318,8 @@ const toggleFullPreview = () => {
                 )}
               </>
             )}
-            {(showTiles && !showUndoRedo) && (
+            {/* Edit mode: only Preview, FAQ, Inquiry visible */}
+            {(showTiles && !showUndoRedo && !tileSelected) && (
               <>
                 <button
                   onClick={toggleFullPreview}
@@ -313,19 +331,6 @@ const toggleFullPreview = () => {
                   </svg>
                   Preview
                 </button>
-                {/* Auto Focus Toggle Button */}
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200">
-  <span className="text-white font-semibold text-base">Auto Focus :</span>
-  <button
-    onClick={() => setAutoFocusOn(prev => !prev)}
-    className={`relative inline-flex items-center h-6 w-11 rounded-full transition-colors duration-300 ${autoFocusOn ? 'bg-green-500' : 'bg-gray-400'}`}
-    title={`Toggle Auto Focus`}
-  >
-    <span
-      className={`inline-block w-5 h-5 transform bg-white rounded-full shadow-md transition-transform duration-300 ${autoFocusOn ? 'translate-x-5' : 'translate-x-1'}`}
-    />
-  </button>
-</div>
                 <button
                   onClick={() => setShowFAQ(true)}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
@@ -349,6 +354,56 @@ const toggleFullPreview = () => {
                 </button>
               </>
             )}
+            {/* After tile selection: Preview, FAQ, Inquiry, Auto Focus visible */}
+            {(showTiles && tileSelected && !showUndoRedo) && (
+              <>
+                <button
+                  onClick={toggleFullPreview}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
+                  title="Full Preview"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                  Preview
+                </button>
+                {/* Auto Focus Toggle Button */}
+                <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200">
+                  <span className="text-white font-semibold text-base">Auto Focus :</span>
+                  <button
+                    onClick={() => setAutoFocusOn(prev => !prev)}
+                    className={`relative inline-flex items-center h-6 w-11 rounded-full transition-colors duration-300 ${autoFocusOn ? 'bg-green-500' : 'bg-gray-400'}`}
+                    title={`Toggle Auto Focus`}
+                  >
+                    <span
+                      className={`inline-block w-5 h-5 transform bg-white rounded-full shadow-md transition-transform duration-300 ${autoFocusOn ? 'translate-x-5' : 'translate-x-1'}`}
+                    />
+                  </button>
+                </div>
+                <button
+                  onClick={() => setShowFAQ(true)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
+                  title="FAQ"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6a3 3 0 00-2.83 4h1.58a1.5 1.5 0 113 0c0 1.5-2.25 1.5-2.25 3v.5M12 17h.01M12 3a9 9 0 100 18 9 9 0 000-18z" />
+                  </svg>
+                  FAQ
+                </button>
+                <button
+                  onClick={() => setShowInquiry(true)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
+                  title="Send Inquiry"
+                >
+                  <svg width="20px" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 17C12.5523 17 13 16.5523 13 16C13 15.4477 12.5523 15 12 15C11.4477 15 11 15.4477 11 16C11 16.5523 11.4477 17 12 17Z" fill="#ffffff"></path>
+                    <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="#ffffff" strokeLinejoin="round" strokeWidth="2"></path>
+                    <path d="M12 14C12 13.8333 12 13.6667 12 13.5C12 13.5 12 12 14 11C16 10 15.5 7 12.5 7C9.5 7 9.5 9.5 9.5 9.5V10" stroke="#ffffff" strokeWidth="2"></path>
+                  </svg> Inquiry
+                </button>
+              </>
+            )}
+            {/* After confirming selection: Undo/Redo visible */}
             {showUndoRedo && (
               <>
                 <button
@@ -396,7 +451,7 @@ const toggleFullPreview = () => {
 </div>
 
           {/* Conditional tile panel */}
-          {showTiles && <TilePanel onClose={() => setShowTiles(false)} showToast={showToast} onLayerConfirmed={handleLayerConfirmed} />}
+          {showTiles && <TilePanel onClose={() => setShowTiles(false)} showToast={showToast} onLayerConfirmed={handleLayerConfirmed} onTileSelected={handleTileSelected} />}
         </>
       )}
 
