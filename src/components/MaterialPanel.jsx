@@ -130,6 +130,8 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
   const [showAddNew, setShowAddNew] = useState(false);
   const [newColor, setNewColor] = useState("#ffffff");
   const [newName, setNewName] = useState("");
+  const [newImage, setNewImage] = useState(null);
+  const [newTab, setNewTab] = useState("Color");
 
   const [selected, setSelected] = useState(cabinetOptions[0]);
   const [showSearch, setShowSearch] = useState(false);
@@ -278,25 +280,118 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
   const renderAddNewColor = () => (
     <div className="overflow-y-auto scrollbar-hide p-2" style={{ maxHeight: '380px' }}>
       <div className="space-y-4 mt-2 animate-fade-in">
-        <h2 className="font-bold text-sm text-slate-800 mb-2">Add New Color</h2>
+        <h2 className="font-bold text-sm text-slate-800 mb-2">Add New Layer</h2>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Color Name</label>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Layer Name</label>
           <input
             type="text"
             value={newName}
             onChange={e => setNewName(e.target.value)}
             className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter color name"
+            placeholder="Enter layer name"
           />
         </div>
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Choose Color</label>
-          <input
-            type="color"
-            value={newColor}
-            onChange={e => setNewColor(e.target.value)}
-            className="w-20 h-20 border border-slate-300 rounded-lg cursor-pointer"
-          />
+        {/* Tabs for Color/Structure, same as EditTabs */}
+        <div className="w-full">
+          <div className="flex border-b mb-2">
+            <button
+              className={`flex-1 py-2 text-sm font-semibold border-b-2 transition-all duration-150 ${newTab === "Color" ? "border-blue-500 text-blue-700 bg-blue-50" : "border-transparent text-slate-600 bg-white"}`}
+              onClick={() => setNewTab("Color")}
+            >
+              Color
+            </button>
+            <button
+              className={`flex-1 py-2 text-sm font-semibold border-b-2 transition-all duration-150 ${newTab === "Structure" ? "border-blue-500 text-blue-700 bg-blue-50" : "border-transparent text-slate-600 bg-white"}`}
+              onClick={() => setNewTab("Structure")}
+            >
+              Structure
+            </button>
+          </div>
+          {newTab === "Color" ? (
+            <div className="flex flex-col items-center justify-center min-h-[120px] border border-dashed border-slate-300 rounded-lg p-4 text-slate-400 text-sm">
+              <div className="flex gap-4">
+                <div className="flex-1 flex flex-col items-center border border-dashed border-slate-300 rounded-lg p-2 min-h-[120px] justify-center">
+                  <label className="block text-xs text-slate-500 mb-2">Drag and drop file to pick a color from it.</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    id="add-color-image-upload"
+                    onChange={e => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                          setNewImage(ev.target.result);
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                  <label htmlFor="add-color-image-upload" className="cursor-pointer text-blue-600 underline text-xs">Select File</label>
+                  {newImage && (
+                    <img src={newImage} alt="Selected" className="mt-2 w-12 h-12 object-cover rounded" />
+                  )}
+                </div>
+                <div className="flex-1 flex flex-col items-center">
+                  <input
+                    type="color"
+                    value={newColor}
+                    onChange={e => setNewColor(e.target.value)}
+                    className="w-20 h-20 border border-slate-300 rounded-lg cursor-pointer"
+                  />
+                  <input
+                    type="text"
+                    value={newColor}
+                    onChange={e => setNewColor(e.target.value)}
+                    className="mt-2 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full text-center"
+                  />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center min-h-[120px] border border-dashed border-slate-300 rounded-lg p-4 text-slate-400 text-sm">
+              <div className="flex gap-4">
+                <div className="flex-1 flex flex-col items-center border border-dashed border-slate-300 rounded-lg p-2 min-h-[120px] justify-center">
+                  <label className="block text-xs text-slate-500 mb-2">Drag and drop file to pick a structure image.</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    id="add-structure-image-upload"
+                    onChange={e => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                          setNewImage(ev.target.result);
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                  <label htmlFor="add-structure-image-upload" className="cursor-pointer text-blue-600 underline text-xs">Select File</label>
+                  {newImage && (
+                    <img src={newImage} alt="Selected" className="mt-2 w-12 h-12 object-cover rounded" />
+                  )}
+                </div>
+                <div className="flex-1 flex flex-col items-center">
+                  <input
+                    type="color"
+                    value={newColor}
+                    onChange={e => setNewColor(e.target.value)}
+                    className="w-20 h-20 border border-slate-300 rounded-lg cursor-pointer"
+                  />
+                  <input
+                    type="text"
+                    value={newColor}
+                    onChange={e => setNewColor(e.target.value)}
+                    className="mt-2 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full text-center"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
         {/* Removed Cancel/Add Color buttons here, actions are now in the bottom bar */}
       </div>
@@ -537,7 +632,7 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
                 <div className="w-full h-16 rounded-xl flex items-center justify-center bg-gradient-to-br from-white/20 via-transparent to-blue-100">
                   <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                 </div>
-                <p className="text-xs mt-3 font-medium leading-tight text-blue-700">Add New Color</p>
+                <p className="text-xs mt-3 font-medium leading-tight text-blue-700">Add New Layer</p>
               </div>
             </div>
           </div>
@@ -561,12 +656,13 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
               className="flex items-center justify-center gap-2 py-2 rounded-xl text-white font-semibold text-base border border-gray-600 bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-black/50 transition-all duration-200 flex-1"
               onClick={() => {
                 if (newName.trim() === "") return;
-                const newOption = { name: newName, color: newColor, grade: "Custom" };
+                const newOption = { name: newName, color: newColor, grade: "Custom", image: newImage };
                 setCabinetOptions([newOption, ...cabinetOptions]);
                 setSelected(newOption);
                 setShowAddNew(false);
                 setNewColor("#ffffff");
                 setNewName("");
+                setNewImage(null);
                 showToast && showToast('New Color Added', `${newName} has been added.`);
               }}
             >
