@@ -469,15 +469,18 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
                   >
                     <div className="w-full h-full rounded-xl bg-gradient-to-br from-white/20 via-transparent to-black/10"></div>
                   </div>
-                  <p className={`text-xs mt-3 font-medium leading-tight transition-colors duration-200 ${
-                    selected.name === item.name 
-                      ? "text-blue-700" 
-                      : hoveredIndex === index 
-                      ? "text-slate-800" 
-                      : "text-slate-600"
-                  }`}>
-                    {item.name}
-                  </p>
+                 <p
+  title={item.name}
+  className={`text-xs mt-3 font-medium leading-tight transition-colors duration-200 line-clamp-2 ${
+    selected.name === item.name 
+      ? "text-blue-700" 
+      : hoveredIndex === index 
+      ? "text-slate-800" 
+      : "text-slate-600"
+  }`}
+>
+  {item.name}
+</p>
                   <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-400/0 via-blue-400/5 to-purple-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none`}></div>
                 </div>
               ))}
