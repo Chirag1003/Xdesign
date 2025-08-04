@@ -109,7 +109,7 @@ function EditTabs({ itemToEdit, setItemToEdit }) {
 }
 
 export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm, onBack, onClose, showToast }) {
-  const cabinetOptions = [
+  const initialCabinetOptions = [
     { name: "Avalon Painted White", color: "#f3f4f6", grade: "Standard" },
     { name: "Avalon Painted Blue", color: "#3b82f6", grade: "Upgrade1" },
     { name: "Avalon Painted Gray", color: "#9ca3af", grade: "Upgrade2" },
@@ -126,6 +126,10 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
     { name: "Milan Painted Verde", color: "#4caf50", grade: "Upgrade1" },
     { name: "Milan Painted Graphite", color: "#424242", grade: "Upgrade2" },
   ];
+  const [cabinetOptions, setCabinetOptions] = useState(initialCabinetOptions);
+  const [showAddNew, setShowAddNew] = useState(false);
+  const [newColor, setNewColor] = useState("#ffffff");
+  const [newName, setNewName] = useState("");
 
   const [selected, setSelected] = useState(cabinetOptions[0]);
   const [showSearch, setShowSearch] = useState(false);
@@ -270,7 +274,45 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
     </div>
   );
 
+  // Add New Color Form
+  const renderAddNewColor = () => (
+    <div className="overflow-y-auto scrollbar-hide p-2" style={{ maxHeight: '380px' }}>
+      <div className="space-y-4 mt-2 animate-fade-in">
+        <h2 className="font-bold text-sm text-slate-800 mb-2">Add New Color</h2>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Color Name</label>
+          <input
+            type="text"
+            value={newName}
+            onChange={e => setNewName(e.target.value)}
+            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter color name"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Choose Color</label>
+          <input
+            type="color"
+            value={newColor}
+            onChange={e => setNewColor(e.target.value)}
+            className="w-20 h-20 border border-slate-300 rounded-lg cursor-pointer"
+          />
+        </div>
+        {/* Removed Cancel/Add Color buttons here, actions are now in the bottom bar */}
+      </div>
+    </div>
+  );
+
   // Normal Mode Content
+  // Helper to hide undo/redo if provided
+  const handleClosePanel = () => {
+    if (typeof window !== "undefined" && window.onHideUndoRedo) {
+      window.onHideUndoRedo();
+    }
+    onBack && onBack();
+    onClose && onClose();
+  };
+
   return (
     <div className={`absolute top-0 left-0 z-50 h-full w-[350px] bg-white shadow-2xl flex flex-col transform transition-all duration-700 ease-out ${isMounted ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"}`}>
       <div className="p-4 pb-24 flex flex-col gap-4">
@@ -286,7 +328,7 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
           >
             <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-black/10"></div>
             <button
-              onClick={() => { onBack && onBack(); onClose && onClose(); }}
+              onClick={handleClosePanel}
               className="absolute inset-0 flex items-center justify-center opacity-100 transition-all duration-300 backdrop-blur-sm bg-white/30 text-slate-700 rounded-xl hover:bg-white/50"
               title="Go Back"
             >
@@ -397,8 +439,10 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
             </div>
           </div>
         </div>
-        {/* Show edit form in place of grid if editing, otherwise show grid */}
-        {editMode && itemToEdit ? (
+        {/* Show Add New Color form, Edit form, or grid */}
+        {showAddNew ? (
+          renderAddNewColor()
+        ) : editMode && itemToEdit ? (
           renderEditLayer()
         ) : (
           <div className="overflow-y-auto scrollbar-hide p-2" style={{ maxHeight: '383px' }}>
@@ -484,13 +528,55 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
                   <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-400/0 via-blue-400/5 to-purple-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none`}></div>
                 </div>
               ))}
+              {/* Add New Color tile at the end */}
+              <div
+                className="group relative rounded-2xl border-2 p-3 cursor-pointer transition-all duration-300 ease-out transform hover:scale-105 hover:-translate-y-1 border-dashed border-blue-400 bg-blue-50 flex flex-col items-center justify-center"
+                onClick={() => setShowAddNew(true)}
+                style={{ minHeight: '110px' }}
+              >
+                <div className="w-full h-16 rounded-xl flex items-center justify-center bg-gradient-to-br from-white/20 via-transparent to-blue-100">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                </div>
+                <p className="text-xs mt-3 font-medium leading-tight text-blue-700">Add New Color</p>
+              </div>
             </div>
           </div>
         )}
       </div>
       {/* Bottom Action Bar */}
       <div className="absolute bottom-0 left-0 w-full p-4 bg-white border-t-4">
-        {editMode && itemToEdit ? (
+        {showAddNew ? (
+          <div className="flex justify-between items-center gap-4">
+            <button
+              className="flex items-center justify-center px-4 py-2 rounded-xl text-white font-semibold text-base border border-gray-600 bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-black/50 transition-all duration-200 w-32"
+              onClick={() => {
+                setShowAddNew(false);
+                setNewColor("#ffffff");
+                setNewName("");
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              className="flex items-center justify-center gap-2 py-2 rounded-xl text-white font-semibold text-base border border-gray-600 bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-black/50 transition-all duration-200 flex-1"
+              onClick={() => {
+                if (newName.trim() === "") return;
+                const newOption = { name: newName, color: newColor, grade: "Custom" };
+                setCabinetOptions([newOption, ...cabinetOptions]);
+                setSelected(newOption);
+                setShowAddNew(false);
+                setNewColor("#ffffff");
+                setNewName("");
+                showToast && showToast('New Color Added', `${newName} has been added.`);
+              }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              Add Layer
+            </button>
+          </div>
+        ) : editMode && itemToEdit ? (
           <div className="flex justify-between items-center gap-4">
             <button
               className="flex items-center justify-center px-4 py-2 rounded-xl text-white font-semibold text-base border border-gray-600 bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-black/50 transition-all duration-200 w-32"

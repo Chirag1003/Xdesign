@@ -67,6 +67,7 @@ export default function Home() {
     setShowUnsavedModal(false);
     setUnsavedChanges(false);
     setShowTiles(false);
+    setShowUndoRedo(false); // Hide undo/redo after save & close
     showToast('Saved', 'Your changes have been saved.');
   };
 
