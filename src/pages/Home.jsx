@@ -405,7 +405,7 @@ const toggleFullPreview = () => {
               </>
             )}
             
-            {/* After confirming selection: Undo/Redo visible, also show Preview and Inquiry */}
+            {/* After confirming selection: Undo/Redo visible, also show Preview and Inquiry, and Focus if a tile is selected */}
             {showUndoRedo && (
               <>
                 <button
@@ -429,6 +429,20 @@ const toggleFullPreview = () => {
                     <path d="M12 14C12 13.8333 12 13.6667 12 13.5C12 13.5 12 12 14 11C16 10 15.5 7 12.5 7C9.5 7 9.5 9.5 9.5 9.5V10" stroke="#ffffff" strokeWidth="2"></path>
                   </svg> Inquiry
                 </button>
+                {showTiles && tileSelected && (
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200">
+                    <span className="text-white font-semibold text-base">Focus:</span>
+                    <button
+                      onClick={() => setAutoFocusOn(prev => !prev)}
+                      className={`relative inline-flex items-center h-6 w-11 rounded-full transition-colors duration-300 ${autoFocusOn ? 'bg-green-500' : 'bg-gray-400'}`}
+                      title={`Toggle Auto Focus`}
+                    >
+                      <span
+                        className={`inline-block w-5 h-5 transform bg-white rounded-full shadow-md transition-transform duration-300 ${autoFocusOn ? 'translate-x-5' : 'translate-x-1'}`}
+                      />
+                    </button>
+                  </div>
+                )}
                 <button
                   onClick={handleUndo}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
