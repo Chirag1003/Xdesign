@@ -63,42 +63,40 @@ export default function Home() {
     showToast('Changes Applied!', '1 tile(s) have been applied to your design.');
   };
 
+  // Centralized function to reset to Home Screen state
+  const resetToHomeScreen = () => {
+    setShowTiles(false);
+    setShowUndoRedo(false);
+    setTileSelected(false);
+    setAutoFocusOn(false);
+    setUnsavedChanges(false);
+  };
+
   const handleHomeClose = () => {
     if (unsavedChanges) {
       setShowUnsavedModal(true);
     } else {
-      setShowTiles(false);
-      setShowUndoRedo(false);
-      setTileSelected(false);
+      resetToHomeScreen();
     }
   };
 
   const handleSaveAndClose = () => {
     setShowUnsavedModal(false);
-    setUnsavedChanges(false);
-    setShowTiles(false);
-    setShowUndoRedo(false); // Hide undo/redo after save & close
-    setTileSelected(false);
+    resetToHomeScreen();
     showToast('Saved', 'Your changes have been saved.');
   };
 
   const handleDiscard = () => {
     setShowUnsavedModal(false);
-    setUnsavedChanges(false);
-    setShowTiles(false);
-    setShowUndoRedo(false);
-    setTileSelected(false);
+    resetToHomeScreen();
     showToast('Layers are not applied to the design.', '', 'error');
   };
 
   const handleSaveBathroom = () => {
-    setUnsavedChanges(false);
-    setShowTiles(false);
-    setShowUndoRedo(false);
+    resetToHomeScreen();
     setChangeHistory([]);
     setRedoHistory([]);
     setShowDownload(true);
-    setTileSelected(false);
     showToast('Layers are updated to your SOHO Kitchen.');
   };
   const handleUndo = () => {
@@ -228,10 +226,7 @@ const toggleFullPreview = () => {
             {/* Back button */}
             <button
               onClick={() => {
-                setShowTiles(false);
-                setShowUndoRedo(false);
-                setTileSelected(false);
-                setAutoFocusOn(false);
+                resetToHomeScreen();
               }}
               className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
               title="Back"
@@ -410,12 +405,33 @@ const toggleFullPreview = () => {
               </>
             )}
             
-            {/* After confirming selection: Undo/Redo visible */}
+            {/* After confirming selection: Undo/Redo visible, also show Preview and Inquiry */}
             {showUndoRedo && (
               <>
                 <button
+                  onClick={toggleFullPreview}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
+                  title="Full Preview"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                  Preview
+                </button>
+                <button
+                  onClick={() => setShowInquiry(true)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
+                  title="Send Inquiry"
+                >
+                  <svg width="20px" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 17C12.5523 17 13 16.5523 13 16C13 15.4477 12.5523 15 12 15C11.4477 15 11 15.4477 11 16C11 16.5523 11.4477 17 12 17Z" fill="#ffffff"></path>
+                    <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="#ffffff" strokeLinejoin="round" strokeWidth="2"></path>
+                    <path d="M12 14C12 13.8333 12 13.6667 12 13.5C12 13.5 12 12 14 11C16 10 15.5 7 12.5 7C9.5 7 9.5 9.5 9.5 9.5V10" stroke="#ffffff" strokeWidth="2"></path>
+                  </svg> Inquiry
+                </button>
+                <button
                   onClick={handleUndo}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:bg-white/20 transition-all duration-200"
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
                   title="Undo"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -426,7 +442,7 @@ const toggleFullPreview = () => {
                 </button>
                 <button
                   onClick={handleRedo}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:bg-white/20 transition-all duration-200"
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
                   title="Redo"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
