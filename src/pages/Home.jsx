@@ -488,7 +488,7 @@ const toggleFullPreview = () => {
 </div>
 
           {/* Conditional tile panel */}
-          {showTiles && <TilePanel onClose={() => setShowTiles(false)} showToast={showToast} onLayerConfirmed={handleLayerConfirmed} onTileSelected={handleTileSelected} />}
+          {showTiles && <TilePanel onClose={() => setShowTiles(false)} showToast={showToast} onLayerConfirmed={handleLayerConfirmed} onTileSelected={handleTileSelected} onTileCancel={() => setTileSelected(false)} />}
         </>
       )}
 

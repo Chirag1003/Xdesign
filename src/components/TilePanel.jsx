@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Pencil } from "lucide-react";
 import MaterialPanel from "./MaterialPanel";
 
-const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected }) => {
+const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }) => {
   // Initial data setup
   const initialOptions = [
     { label: "Cabinets", value: "Avalon Painted White" },
@@ -183,6 +183,11 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected }) => {
     } else if (e.key === "Escape") {
       setEditingIndex(null);
     }
+  };
+
+  const handleCancel = () => {
+    setActiveIndex(null);
+    if (typeof onTileCancel === 'function') onTileCancel();
   };
 
   return (
@@ -426,6 +431,7 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected }) => {
           onConfirm={() => {
             onLayerConfirmed && onLayerConfirmed();
           }}
+          onCancel={handleCancel}
         />
       )}
     </>
