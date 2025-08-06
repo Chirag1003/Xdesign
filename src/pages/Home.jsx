@@ -8,6 +8,7 @@ import timber from "../assets/timber rem.png"; // Assuming you have an image for
 export default function Home() {
   const [autoFocusOn, setAutoFocusOn] = useState(false); // Auto Focus toggle state
   const [tileSelected, setTileSelected] = useState(false); // Track if a tile is selected but not confirmed
+  const [initialLoad, setInitialLoad] = useState(true); // New state for initial load
   React.useEffect(() => {
     const handleFullscreenChange = () => {
       if (!document.fullscreenElement) {
@@ -61,6 +62,7 @@ export default function Home() {
     setRedoHistory([]);
     setTileSelected(false); // Reset tileSelected after confirmation
     showToast('Changes Applied!', '1 tile(s) have been applied to your design.');
+    setInitialLoad(false); // User has made changes, so set initialLoad to false
   };
 
   // Centralized function to reset to Home Screen state
@@ -174,7 +176,10 @@ const toggleFullPreview = () => {
           {/* Edit Kitchen button (normal mode) */}
           {!showTiles && (
             <button
-              onClick={() => setShowTiles(true)}
+              onClick={() => {
+                setShowTiles(true);
+                setInitialLoad(false); // User clicked edit, so set initialLoad to false
+              }}
               className="absolute bottom-6 left-8 flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
               title="Edit Kitchen"
             >
@@ -265,7 +270,7 @@ const toggleFullPreview = () => {
           {/* Bottom center: All other action buttons */}
           <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-4 z-40">
             {/* Home screen: all buttons visible */}
-            {(!showTiles && !showUndoRedo && !tileSelected) && (
+            {(!showTiles && !showUndoRedo && !tileSelected && !initialLoad) && (
               <>
                 <button
                   onClick={toggleFullPreview}
@@ -544,7 +549,7 @@ const toggleFullPreview = () => {
         </div>
       )}
 
-      {/* Help Modal */}
+git       {/* Help Modal */}
       {showHelp && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="relative bg-[#00000047] backdrop-blur-xl text-white rounded-2xl shadow-2xl border border-white/30 p-6 w-[22rem]">
