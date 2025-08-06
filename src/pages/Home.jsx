@@ -207,6 +207,7 @@ const toggleFullPreview = () => {
           {showTiles && (
             <>
               {/* Cross (close) button */}
+              {tileSelected && (
               <button
                 onClick={() => {
                   setAutoFocusOn(false);
@@ -226,6 +227,7 @@ const toggleFullPreview = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
+              )}
           {/* Back and Save Kitchen buttons side by side */}
           <div className="absolute bottom-6 left-8 flex items-center gap-4 z-40">
             {/* Back button */}
