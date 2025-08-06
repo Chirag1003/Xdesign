@@ -8,7 +8,7 @@ import timber from "../assets/timber rem.png"; // Assuming you have an image for
 export default function Home() {
   const [autoFocusOn, setAutoFocusOn] = useState(false); // Auto Focus toggle state
   const [tileSelected, setTileSelected] = useState(false); // Track if a tile is selected but not confirmed
-  const [initialLoad, setInitialLoad] = useState(true); // New state for initial load
+  const [hasEngagedWithDesign, setHasEngagedWithDesign] = useState(false); // New state to track user engagement
   React.useEffect(() => {
     const handleFullscreenChange = () => {
       if (!document.fullscreenElement) {
@@ -62,7 +62,7 @@ export default function Home() {
     setRedoHistory([]);
     setTileSelected(false); // Reset tileSelected after confirmation
     showToast('Changes Applied!', '1 tile(s) have been applied to your design.');
-    setInitialLoad(false); // User has made changes, so set initialLoad to false
+    setHasEngagedWithDesign(true); // User has confirmed changes, so they have engaged
   };
 
   // Centralized function to reset to Home Screen state
@@ -72,7 +72,7 @@ export default function Home() {
     setTileSelected(false);
     setAutoFocusOn(false);
     setUnsavedChanges(false);
-  };
+  }; // Do not reset hasEngagedWithDesign here, it should persist until a full app reset (e.g., page refresh)
 
   const handleHomeClose = () => {
     if (unsavedChanges) {
@@ -86,12 +86,14 @@ export default function Home() {
     setShowUnsavedModal(false);
     resetToHomeScreen();
     showToast('Saved', 'Your changes have been saved.');
+    setHasEngagedWithDesign(true); // User saved and closed, so they have engaged
   };
 
   const handleDiscard = () => {
     setShowUnsavedModal(false);
     resetToHomeScreen();
     showToast('Layers are not applied to the design.', '', 'error');
+    setHasEngagedWithDesign(true); // User discarded, implying previous engagement
   };
 
   const handleSaveBathroom = () => {
@@ -100,6 +102,7 @@ export default function Home() {
     setRedoHistory([]);
     setShowDownload(true);
     showToast('Layers are updated to your SOHO Kitchen.');
+    setHasEngagedWithDesign(true); // User saved, so they have engaged
   };
   const handleUndo = () => {
     if (changeHistory.length > 0) {
@@ -176,10 +179,7 @@ const toggleFullPreview = () => {
           {/* Edit Kitchen button (normal mode) */}
           {!showTiles && (
             <button
-              onClick={() => {
-                setShowTiles(true);
-                setInitialLoad(false); // User clicked edit, so set initialLoad to false
-              }}
+              onClick={() => setShowTiles(true)} // Clicking edit just shows the tile panel, not engagement for home screen buttons
               className="absolute bottom-6 left-8 flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
               title="Edit Kitchen"
             >
@@ -270,7 +270,7 @@ const toggleFullPreview = () => {
           {/* Bottom center: All other action buttons */}
           <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-4 z-40">
             {/* Home screen: all buttons visible */}
-            {(!showTiles && !showUndoRedo && !tileSelected && !initialLoad) && (
+            {(!showTiles && hasEngagedWithDesign) && (
               <>
                 <button
                   onClick={toggleFullPreview}
