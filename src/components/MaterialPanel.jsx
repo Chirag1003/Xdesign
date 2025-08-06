@@ -230,7 +230,7 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
   // Edit form as a simple section, but inside a scrollable container like the grid
   const renderEditLayer = () => (
     showGoogleSearch ? renderGoogleSearchPanel() : (
-    <div className="overflow-y-auto scrollbar-hide p-2" style={{ maxHeight: '380px' }}>
+    <div className="overflow-y-auto scrollbar-hide p-2" style={{ maxHeight: editMode ? '590px' : '380px' }}>
       <div className="space-y-4 mt-2 animate-fade-in">
         <div className="space-y-4">
           {/* Name field */}
@@ -289,7 +289,7 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
             </select>
           </div>
           {/* Preview */}
-          <div className="mt-6">
+          {/* <div className="mt-6">
             <label className="block text-sm font-medium text-slate-700 mb-2">Preview</label>
             <div className="flex items-center gap-4 p-4 border border-slate-200 rounded-xl">
               <div 
@@ -302,7 +302,7 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
                 <p className="text-sm text-slate-600">Product Code: {itemToEdit.productCode || '-'}</p>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
@@ -518,7 +518,7 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
 
   return (
     <div className={`absolute top-0 left-0 z-50 h-full w-[350px] bg-white shadow-2xl flex flex-col transform transition-all duration-700 ease-out ${isMounted ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"}`} style={{ maxHeight: '100vh' }}>
-      {!showGoogleSearch && (
+      {!showGoogleSearch && !((editMode && itemToEdit)) && (
         <div className="p-4 pb-24 flex flex-col gap-4">
           {/* Enhanced Selection Header */}
           <div 
@@ -553,11 +553,7 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
             className={`flex items-center justify-between transform transition-all duration-500 delay-300 ${isMounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"} z-[9999] relative`}
           >
             {/* Show either All {title} or Edit Layer header */}
-            {editMode && itemToEdit ? (
-              <h2 className="font-bold text-sm text-slate-800">Edit Layer</h2>
-            ) : (
-              <h2 className="font-bold text-sm text-slate-800">All {title}</h2>
-            )}
+            <h2 className="font-bold text-sm text-slate-800">All {title}</h2>
             <div className="flex gap-2 relative z-10">
               {/* Search Button/Input */}
               <div className="relative flex items-center">
@@ -646,8 +642,6 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
           {/* Show Add New Color form, Edit form, or grid */}
           {showAddNew ? (
             renderAddNewColor()
-          ) : editMode && itemToEdit ? (
-            renderEditLayer()
           ) : (
             <div className="overflow-y-auto scrollbar-hide p-2" style={{ maxHeight: '383px' }}>
               <div className="grid grid-cols-3 gap-4 relative z-0">
@@ -746,6 +740,19 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
               </div>
             </div>
           )}
+        </div>
+      )}
+      {/* Only show edit form when in editMode with itemToEdit and not Google search */}
+      {editMode && itemToEdit && !showGoogleSearch && (
+        <div className="flex-1 flex flex-col p-4 pb-24 gap-4 min-h-0 max-h-[85vh]">
+          {/* Edit Layer header, sticky at the top */}
+          <div className="mb-2 flex-shrink-0">
+            <h2 className="font-bold text-md text-slate-800">Edit Layer</h2>
+          </div>
+          {/* Make the whole edit form scrollable, with increased height */}
+          <div className="flex-1  scrollbar-hide ">
+            {renderEditLayer()}
+          </div>
         </div>
       )}
       {/* Google Search Panel (only content below header/filters) */}
