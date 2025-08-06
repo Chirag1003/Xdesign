@@ -549,7 +549,7 @@ const toggleFullPreview = () => {
         </div>
       )}
 
-git       {/* Help Modal */}
+      {/* Help Modal */}
       {showHelp && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="relative bg-[#00000047] backdrop-blur-xl text-white rounded-2xl shadow-2xl border border-white/30 p-6 w-[22rem]">
