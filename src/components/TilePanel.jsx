@@ -235,7 +235,7 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
         </div>
 
         {/* Tiles container */}
-        <div className="max-h-[68vh] overflow-y-auto scrollbar-hide pr-2" ref={tilesContainerRef}>
+        <div className="max-h-[64vh] overflow-y-auto scrollbar-hide pr-2 snap-y snap-mandatory" ref={tilesContainerRef}>
           {designOptions.map((item, index) => (
             <div
               key={`${item.label}-${index}`}
@@ -244,7 +244,7 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
               onDragOver={(e) => handleDragOver(e, index)}
               onDrop={(e) => handleDrop(e, index)}
               onDragEnd={handleDragEnd}
-              className={`group relative bg-white/95 backdrop-blur-sm border-2 rounded-2xl shadow-lg cursor-pointer transition-all duration-300 ease-out mb-3 ${
+              className={`group relative bg-white/95 backdrop-blur-sm border-2 rounded-2xl shadow-lg cursor-pointer transition-all duration-300 ease-out mb-3 snap-start ${
                 activeIndex === index
                   ? "border-blue-500 bg-blue-50/80 shadow-blue-200/50"
                   : hoveredIndex === index
