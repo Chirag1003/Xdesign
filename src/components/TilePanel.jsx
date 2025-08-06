@@ -28,6 +28,8 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
   const [editImage, setEditImage] = useState(null);
   const tilesContainerRef = useRef(null);
   const editingRef = useRef(null);
+  const originalEditLabel = useRef("");
+  const originalEditValue = useRef("");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -142,12 +144,18 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
     if (index === "header") {
       setEditLabel(headerTitle);
       setEditValue("");
+      originalEditLabel.current = headerTitle;
+      originalEditValue.current = "";
     } else if (index === "new") {
       setEditLabel("");
       setEditValue("");
+      originalEditLabel.current = "";
+      originalEditValue.current = "";
     } else {
       setEditLabel(designOptions[index].label);
       setEditValue(designOptions[index].value);
+      originalEditLabel.current = designOptions[index].label;
+      originalEditValue.current = designOptions[index].value;
     }
   };
 
@@ -175,6 +183,12 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
     }
 
     setEditingIndex(null);
+  };
+
+  const handleEditCancel = () => {
+    setEditingIndex(null);
+    setEditLabel(originalEditLabel.current);
+    setEditValue(originalEditValue.current);
   };
 
   const handleKeyDown = (e) => {
@@ -220,17 +234,32 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
             <div className="relative z-10 tracking-wide">{headerTitle}</div>
           )}
 
-          {(hoveredIndex === "header" && editingIndex !== "header") && (
+          {editingIndex === "header" ? (
             <button
               type="button"
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300 transition w-7 h-7 flex items-center justify-center z-20"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-red-300 transition w-6 h-6 flex items-center justify-center z-20"
               onClick={(e) => {
                 e.stopPropagation();
-                handleEditStart("header");
+                handleEditCancel();
               }}
             >
-              <Pencil className="w-4 h-4 text-gray-500 cursor-pointer opacity-70 hover:opacity-100 transition-opacity" />
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500 cursor-pointer opacity-70 hover:text-gray-700 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
+          ) : (
+            (hoveredIndex === "header" && editingIndex !== "header") && (
+              <button
+                type="button"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300 transition w-6 h-6 flex items-center justify-center z-20"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEditStart("header");
+                }}
+              >
+                <Pencil className="w-4 h-4 text-gray-500 cursor-pointer opacity-70 hover:opacity-100 transition-opacity" />
+              </button>
+            )
           )}
         </div>
 
@@ -324,14 +353,29 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
                     )}
                   </div>
 
-                  {(hoveredIndex === index && editingIndex !== index) && (
-                    <Pencil
-                      className="absolute top-2 right-2 w-4 h-4  text-gray-500 cursor-pointer hover:bg-slate-100 opacity-70 hover:opacity-100 transition-opacity z-20"
+                  {editingIndex === index ? (
+                    <button
+                      type="button"
+                      className="absolute top-1 right-1 w-6 h-6 p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-red-300 transition flex items-center justify-center z-20"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleEditStart(index);
+                        handleEditCancel();
                       }}
-                    />
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500 cursor-pointer opacity-70 hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  ) : (
+                    (hoveredIndex === index && editingIndex !== index) && (
+                      <Pencil
+                        className="absolute top-2 right-2 w-4 h-4  text-gray-500 cursor-pointer hover:bg-slate-100 opacity-70 hover:opacity-100 transition-opacity z-20"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditStart(index);
+                        }}
+                      />
+                    )
                   )}
                 </div>
 
@@ -419,6 +463,20 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
             ) : (
               <span className="text-blue-600 font-semibold">+ Add New Option</span>
             )}
+            {editingIndex === "new" && (
+            <button
+              type="button"
+              className="absolute top-1 right-1 p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-red-300 transition flex items-center justify-center z-20"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEditCancel();
+              }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500 cursor-pointer opacity-70 hover:text-blue-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
           </div>
         </div>
       </div>
