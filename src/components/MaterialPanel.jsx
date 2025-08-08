@@ -147,6 +147,7 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
   const [googleSearchTerm, setGoogleSearchTerm] = useState("");
   const [googleRegion, setGoogleRegion] = useState("All");
   const [showRegionFilter, setShowRegionFilter] = useState(false);
+  const [sortOrder, setSortOrder] = useState("A-Z"); // Default is A-Z
 
   // Expand dummyGoogleResults to ~20 color tiles
   const dummyGoogleResults = [
@@ -178,11 +179,16 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
     });
   }, []);
 
-  const filteredOptions = cabinetOptions
+  let filteredOptions = cabinetOptions
     .filter(item =>
       (selectedGrade === "All" || item.grade === selectedGrade) &&
       item.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+  if (sortOrder === "A-Z") {
+    filteredOptions = filteredOptions.slice().sort((a, b) => a.name.localeCompare(b.name));
+  } else if (sortOrder === "Z-A") {
+    filteredOptions = filteredOptions.slice().sort((a, b) => b.name.localeCompare(a.name));
+  }
 
   const handleMenuClick = (index, e) => {
     e.stopPropagation();
@@ -520,7 +526,7 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
     <div className={`absolute top-0 left-0 z-50 h-full w-[350px] bg-white shadow-2xl flex flex-col transform transition-all duration-700 ease-out ${isMounted ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"}`} style={{ maxHeight: '100vh' }}>
       {!showGoogleSearch && !((editMode && itemToEdit)) && (
         <div className="p-4 pb-24 flex flex-col gap-4">
-          {/* Enhanced Selection Header */}
+          {/* Enhanced Selection Header - always visible */}
           <div 
             className={`flex items-center gap-4 relative p-4 border-2 rounded-2xl shadow-lg bg-gradient-to-r from-slate-50 to-white border-slate-200 transform transition-all duration-500 delay-200 ${
               isMounted ? "translate-y-0 opacity-100 scale-100" : "translate-y-4 opacity-0 scale-95"
@@ -550,10 +556,10 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
           </div>
           {/* Enhanced Header with Controls */}
           <div 
-            className={`flex items-center justify-between transform transition-all duration-500 delay-300 ${isMounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"} z-[9999] relative`}
+            className={`flex items-center px-2 justify-between transform transition-all duration-500 delay-300 ${isMounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"} z-[9999] relative`}
           >
             {/* Show either All {title} or Edit Layer header */}
-            <h2 className="font-bold text-sm text-slate-800">All {title}</h2>
+            {!showSearch && <h2 className="font-bold text-sm text-slate-800">All {title}</h2>}
             <div className="flex gap-2 relative z-10">
               {/* Search Button/Input */}
               <div className="relative flex items-center">
@@ -579,64 +585,127 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
                     </svg>
                   </button>
                 ) : (
-                  <div className="relative flex items-center">
-                    <input
-                      type="text"
-                      className="transition-all duration-300 border-2 border-slate-200 rounded-full px-4 py-2 text-sm bg-white ring-gray-400 outline-none w-44 pl-6 pr-10"
-                      placeholder={`Search ${title}`}
-                      value={searchTerm}
-                      onChange={e => setSearchTerm(e.target.value)}
-                      autoFocus
-                    />
+                  <div className="relative flex items-center gap-2">
+                    <div className="relative w-[13rem]">
+                      <input
+                        type="text"
+                        className="transition-all duration-300 border-2 border-slate-200 rounded-full px-4 py-2 text-sm bg-white ring-gray-400 outline-none w-full pl-6 pr-10"
+                        placeholder={`Search ${title}`}
+                        value={searchTerm}
+                        onChange={e => setSearchTerm(e.target.value)}
+                        autoFocus
+                      />
+                      {/* Cross icon overlays input, right side */}
+                      <button
+                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full text-slate-400 hover:text-slate-700 focus:outline-none"
+                        onClick={() => { setShowSearch(false); setSearchTerm(''); }}
+                        aria-label="Close search"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                    {/* Filter and sort icons remain in their original position, outside search input */}
+                    <div className="flex gap-2">
+                      <div className="relative">
+                        <button
+                          onClick={() => setShowFilter(!showFilter)}
+                          className={`flex items-center justify-center text-sm border-2 rounded-full w-10 h-10 transition-all duration-200 hover:scale-105 active:scale-95 z-50 ${
+                            showFilter 
+                              ? "border-gray-500 bg-gray-50 text-gray-600" 
+                              : "border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300"
+                          }`}
+                          aria-label="Open filter"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 13.414V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-4.586a1 1 0 00-.293-.707L2.293 6.707A1 1 0 012 6V4z" />
+                          </svg>
+                        </button>
+                        {/* Filter Dropdown with only grade filter */}
+                        {showFilter && (
+                          <div className="absolute right-0 mt-2 w-44 bg-white border border-slate-200 rounded-2xl shadow-2xl z-[9999] py-2 px-2 animate-fade-in">
+                            {/* Grade Filter */}
+                            {['All', 'Standard', 'Upgrade1', 'Upgrade2', 'Upgrade3'].map(grade => (
+                              <button
+                                key={grade}
+                                className={`w-full flex items-center justify-between text-left px-5 py-2 rounded-xl transition-all duration-150 mb-1 last:mb-0 font-medium ${
+                                  selectedGrade === grade 
+                                    ? 'bg-blue-100 text-blue-700 shadow-inner' 
+                                    : 'hover:bg-slate-100 text-slate-700'
+                                }`}
+                                onClick={() => {
+                                  setSelectedGrade(grade);
+                                  setShowFilter(false);
+                                }}
+                              >
+                                <span>{grade}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <button
+                        className={`flex items-center justify-center text-sm font-bold border-2 border-slate-200 rounded-full w-10 h-10 transition-all duration-200 hover:scale-105 active:scale-95 z-50 ${sortOrder === "A-Z" ? "text-gray-700" : "text-slate-600"}`}
+                        aria-label="Sort"
+                        onClick={() => setSortOrder(sortOrder === "A-Z" ? "Z-A" : "A-Z")}
+                      >
+                        {sortOrder === "A-Z" ? "A-Z" : "Z-A"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              {/* Filter Button (only visible when not searching) */}
+              {!showSearch && (
+                <>
+                  <div className="relative">
                     <button
-                      className="absolute right-3 p-1 rounded-full text-slate-400 hover:text-slate-700 focus:outline-none"
-                      onClick={() => { setShowSearch(false); setSearchTerm(''); }}
-                      aria-label="Close search"
+                      onClick={() => setShowFilter(!showFilter)}
+                      className={`flex items-center justify-center text-sm border-2 rounded-full w-10 h-10 transition-all duration-200 hover:scale-105 active:scale-95 z-50 ${
+                        showFilter 
+                          ? "border-gray-500 bg-gray-50 text-gray-600" 
+                          : "border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300"
+                      }`}
+                      aria-label="Open filter"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 13.414V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-4.586a1 1 0 00-.293-.707L2.293 6.707A1 1 0 012 6V4z" />
                       </svg>
                     </button>
+                    {/* Filter Dropdown with only grade filter */}
+                    {showFilter && (
+                      <div className="absolute right-0 mt-2 w-44 bg-white border border-slate-200 rounded-2xl shadow-2xl z-[9999] py-2 px-2 animate-fade-in">
+                        {/* Grade Filter */}
+                        {['All', 'Standard', 'Upgrade1', 'Upgrade2', 'Upgrade3'].map(grade => (
+                          <button
+                            key={grade}
+                            className={`w-full flex items-center justify-between text-left px-5 py-2 rounded-xl transition-all duration-150 mb-1 last:mb-0 font-medium ${
+                              selectedGrade === grade 
+                                ? 'bg-blue-100 text-blue-700 shadow-inner' 
+                                : 'hover:bg-slate-100 text-slate-700'
+                            }`}
+                            onClick={() => {
+                              setSelectedGrade(grade);
+                              setShowFilter(false);
+                            }}
+                          >
+                            <span>{grade}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              {/* Filter Button */}
-              <div className="relative">
-                <button
-                  onClick={() => setShowFilter(!showFilter)}
-                  className={`flex items-center justify-center text-sm border-2 rounded-full w-10 h-10 transition-all duration-200 hover:scale-105 active:scale-95 z-50 ${
-                    showFilter 
-                      ? "border-gray-500 bg-gray-50 text-gray-600" 
-                      : "border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300"
-                  }`}
-                  aria-label="Open filter"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 13.414V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-4.586a1 1 0 00-.293-.707L2.293 6.707A1 1 0 012 6V4z" />
-                  </svg>
-                </button>
-                {/* Filter Dropdown with higher z-index */}
-                {showFilter && (
-                  <div className="absolute right-0 mt-2 w-44 bg-white border border-slate-200 rounded-2xl shadow-2xl z-[9999] py-2 px-2 animate-fade-in">
-                    {['All', 'Standard', 'Upgrade1', 'Upgrade2', 'Upgrade3'].map(grade => (
-                      <button
-                        key={grade}
-                        className={`w-full flex items-center justify-between text-left px-5 py-2 rounded-xl transition-all duration-150 mb-1 last:mb-0 font-medium ${
-                          selectedGrade === grade 
-                            ? 'bg-blue-100 text-blue-700 shadow-inner' 
-                            : 'hover:bg-slate-100 text-slate-700'
-                        }`}
-                        onClick={() => {
-                          setSelectedGrade(grade);
-                          setShowFilter(false);
-                        }}
-                      >
-                        <span>{grade}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+                  {/* Sorting Icon (only visible when not searching) */}
+                  <button
+                    className={`flex items-center justify-center text-sm font-semibold border-2 border-slate-200 rounded-full w-10 h-10 transition-all duration-200 hover:scale-105 active:scale-95 z-50 ${sortOrder === "A-Z" ? "text-gray-700" : "text-slate-600"}`}
+                    aria-label="Sort"
+                    onClick={() => setSortOrder(sortOrder === "A-Z" ? "Z-A" : "A-Z")}
+                  >
+                    {sortOrder === "A-Z" ? "A-Z" : "Z-A"}
+                  </button>
+                </>
+              )}
             </div>
           </div>
           {/* Show Add New Color form, Edit form, or grid */}
