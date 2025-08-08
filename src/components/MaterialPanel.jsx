@@ -520,7 +520,7 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
         </div>
       </div>
       {/* Scrollable Content Area */}
-      <div className="flex-1 max-h-[600px] overflow-y-auto scrollbar-hide p-2 pt-0"> {/* Removed maxHeight, flex-1 handles height */}
+      <div className="flex-1 max-h-[600px] overflow-y-auto scrollbar-hide p-2 "> {/* Removed maxHeight, flex-1 handles height */}
         <div className="grid grid-cols-3 gap-4">
           {dummyGoogleResults
             .filter(item =>
@@ -749,7 +749,7 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
           {showAddNew ? (
             renderAddNewColor()
           ) : (
-            <div className="overflow-y-auto scrollbar-hide p-2 pt-0" style={{ maxHeight: '383px' }}>
+            <div className="overflow-y-auto scrollbar-hide p-2 " style={{ maxHeight: '383px' }}>
               <div className="grid grid-cols-3 gap-4 relative z-0">
                 {filteredOptions.map((item, index) => (
                   <div
