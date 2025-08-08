@@ -74,13 +74,13 @@ export default function Home() {
     setUnsavedChanges(false);
   }; // Do not reset hasEngagedWithDesign here, it should persist until a full app reset (e.g., page refresh)
 
-  const handleHomeClose = () => {
-    if (unsavedChanges) {
-      setShowUnsavedModal(true);
-    } else {
-      resetToHomeScreen();
-    }
-  };
+  // const handleHomeClose = () => {
+  //   if (unsavedChanges) {
+  //     setShowUnsavedModal(true);
+  //   } else {
+  //     resetToHomeScreen();
+  //   }
+  // };
 
   const handleSaveAndClose = () => {
     setShowUnsavedModal(false);
@@ -176,6 +176,38 @@ const toggleFullPreview = () => {
             className="w-full h-full object-cover"
           />
 
+          {/* Zoom Controls above Biorev branding logo (right side) */}
+          <div className="absolute bottom-32 right-8 flex flex-col items-center gap-3 z-50">
+            
+             <button className="bg-[#00000047] backdrop-blur-md border border-white rounded-full p-2 shadow-lg hover:bg-white/20 transition-all duration-200" title="Zoom In">
+              {/* New Zoom In Icon: Magnifying glass with plus */}
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2" fill="none" />
+                <line x1="11" y1="8" x2="11" y2="14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <line x1="8" y1="11" x2="14" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <line x1="16" y1="16" x2="21" y2="21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+            {/* Zoom Out */}
+            <button className="bg-[#00000047] backdrop-blur-md border border-white rounded-full p-2 shadow-lg hover:bg-white/20 transition-all duration-200" title="Zoom Out">
+              {/* New Zoom Out Icon: Magnifying glass with minus */}
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2" fill="none" />
+                <line x1="8" y1="11" x2="14" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <line x1="16" y1="16" x2="21" y2="21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+            
+            {/* Reset */}
+            <button className="bg-[#00000047] backdrop-blur-md border border-white rounded-full p-2 shadow-lg hover:bg-white/20 transition-all duration-200" title="Reset Zoom">
+              {/* Updated Reset Icon: Refresh arrow */}
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v6h6M20 20v-6h-6" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 10a8.001 8.001 0 0114.899-2.113M20 14a8.001 8.001 0 01-14.899 2.113" />
+              </svg>
+            </button>
+          </div>
+
           {/* Edit Kitchen button (normal mode) */}
           {!showTiles && (
             <button
@@ -206,34 +238,17 @@ const toggleFullPreview = () => {
           {/* Show cross and Save Kitchen buttons only in edit mode */}
           {showTiles && (
             <>
-              {/* Cross (close) button */}
-              {tileSelected && (
-              <button
-                onClick={() => {
-                  setAutoFocusOn(false);
-                  handleHomeClose();
-                }}
-                className="absolute top-6 right-6 bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-700 p-2 rounded-full shadow"
-                title="Close"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-              )}
+              {/* Removed close button functionality as per request */}
           {/* Back and Save Kitchen buttons side by side */}
           <div className="absolute bottom-6 left-8 flex items-center gap-4 z-40">
-            {/* Back button */}
+            {/* Back button now shows unsaved changes modal if there are unsaved changes */}
             <button
               onClick={() => {
-                resetToHomeScreen();
+                if (unsavedChanges) {
+                  setShowUnsavedModal(true);
+                } else {
+                  resetToHomeScreen();
+                }
               }}
               className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
               title="Back"
@@ -476,11 +491,21 @@ const toggleFullPreview = () => {
             )}
           </div>
 
-          {/* Branding */}
-          <div className="absolute top-0 left-0 bg-[#00000047] px-4 py-2 rounded-lg shadow border border-white/20 backdrop-blur-sm flex items-center gap-2 text-white text-xs">
- <img src={timber}
-   alt="Powered by Biorev Studio"
-   className="w-32 opacity-90 rounded" /></div>
+          {/* Branding: top left by default, moves to right of MaterialPanel only after a tile is selected */}
+          {(!showTiles || (showTiles && !tileSelected)) && (
+            <div className="absolute top-0 left-0 bg-[#00000047] px-4 py-2 rounded-lg shadow border border-white/20 backdrop-blur-sm flex items-center gap-2 text-white text-xs">
+              <img src={timber}
+                alt="Powered by Biorev Studio"
+                className="w-32 opacity-90 rounded" />
+            </div>
+          )}
+          {showTiles && tileSelected && (
+            <div className="absolute top-0 left-[22rem] bg-[#00000047] px-4 py-2 rounded-lg shadow border border-white/20 backdrop-blur-sm flex items-center gap-2 text-white text-xs z-50">
+              <img src={timber}
+                alt="Powered by Biorev Studio"
+                className="w-32 opacity-90 rounded" />
+            </div>
+          )}
  <div className="absolute bottom-0 right-0 bg-[#00000047] px-4 py-2 rounded-lg shadow border border-white/20 backdrop-blur-sm flex items-center gap-2 text-white text-xs">
  {/* <img src={timber}
    alt="Powered by Biorev Studio"

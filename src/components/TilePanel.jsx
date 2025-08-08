@@ -318,6 +318,32 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
                     <div className={`absolute inset-0 rounded-xl border-2 border-blue-400/0 transition-all duration-300 ${
                       hoveredIndex === index ? "border-blue-400/30" : ""
                     }`}></div>
+                    {/* Removed upload icon from image corner on hover */}
+                    {/* Upload option overlay with new SVG design when editing */}
+                    {editingIndex === index && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-white/40 backdrop-blur-sm rounded-xl z-30">
+                        <label className="cursor-pointer flex flex-col items-center">
+                          {/* Simple upload SVG icon with gray color and hover effect */}
+                          <span className="group flex flex-col items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6  text-gray-500 group-hover:text-gray-700 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7" />
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4" />
+                            </svg>
+                            <span className="text-xs text-gray-700 font-semibold mt-1 group-hover:text-gray-900 transition-colors">Upload</span>
+                          </span>
+                          <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = (ev) => {
+                                setEditImage(ev.target.result);
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }} />
+                        </label>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex-1 min-w-0">
@@ -356,12 +382,13 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
                   {editingIndex === index ? (
                     <button
                       type="button"
-                      className="absolute top-1 right-1 w-6 h-6 p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-red-300 transition flex items-center justify-center z-20"
+                      className="absolute top-1 right-1 w-6 h-6 p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-red-300 transition flex items-center justify-center z-40"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleEditCancel();
                       }}
                     >
+                      {/* Cross SVG */}
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500 cursor-pointer opacity-70 hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                       </svg>
