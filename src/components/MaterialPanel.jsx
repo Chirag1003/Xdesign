@@ -317,9 +317,9 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
 
   // Add New Color Form
   const renderAddNewColor = () => (
-    <div className="overflow-y-auto scrollbar-hide p-2" style={{ maxHeight: '380px' }}>
+    <div className="overflow-y-auto scrollbar-hide p-2" style={{ maxHeight: '590px' }}>
       <div className="space-y-4 mt-2 animate-fade-in">
-        <h2 className="font-bold text-sm text-slate-800 mb-2">Add New Layer</h2>
+        {/* <h2 className="font-bold text-sm text-slate-800 mb-2">Add New Layer</h2> */}
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Layer Name</label>
           <input
@@ -330,6 +330,18 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
             placeholder="Enter layer name"
           />
         </div>
+        {/* Google Search Button */}
+        <button
+          type="button"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 text-black font-medium rounded-lg border border-blue-200 text-sm transition-all duration-150"
+          onClick={() => {
+            setShowGoogleSearch(true);
+            setGoogleSearchTerm(newName || "");
+          }}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4"><g><path fill="#4285F4" d="M12 11v2.5h5.9c-.25 1.4-1.7 4-5.9 4-3.6 0-6.5-2.9-6.5-6.5s2.9-6.5 6.5-6.5c2.1 0 3.5.8 4.3 1.5l2.9-2.9C17.2 2.7 14.8 2 12 2 6.5 2 2 6.5 2 12s4.5 10 10 10c5.7 0 9.5-4 9.5-9.5 0-.6-.1-1.1-.2-1.5H12z"/><path fill="#34A853" d="M3.6 7.1l2.4 1.8C7.1 7.1 9.3 5.5 12 5.5c2.1 0 3.5.8 4.3 1.5l2.9-2.9C17.2 2.7 14.8 2 12 2 8.1 2 4.7 4.1 3.6 7.1z"/><path fill="#FBBC05" d="M12 22c2.7 0 5.2-.9 7.1-2.4l-2.9-2.3C14.8 18.5 13.5 19 12 19c-3.6 0-6.5-2.9-6.5-6.5 0-.7.1-1.4.3-2.1l-2.4-1.8C2.2 10.1 2 11 2 12c0 5.5 4.5 10 10 10z"/><path fill="#EA4335" d="M22 12c0-.6-.1-1.1-.2-1.5H12v3h5.9c-.25 1.4-1.7 4-5.9 4-2.5 0-4.6-1.5-5.4-3.6l-2.4 1.8C4.7 19.9 8.1 22 12 22c5.7 0 9.5-4 9.5-9.5z"/></g></svg>
+          Search on Google
+        </button>
         {/* Tabs for Color/Structure, same as EditTabs */}
         <div className="w-full">
           <div className="flex border-b mb-2">
@@ -432,7 +444,32 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
             </div>
           )}
         </div>
-        {/* Removed Cancel/Add Color buttons here, actions are now in the bottom bar */}
+        {/* Product Code field */}
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Product Code</label>
+          <input
+            type="text"
+            value={window.newProductCode || ''}
+            onChange={e => { window.newProductCode = e.target.value; }}
+            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter product code"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Add a Manufacturer</label>
+          <select
+            value={window.newManufacturer || ''}
+            onChange={e => { window.newManufacturer = e.target.value; }}
+            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Select Manufacturer</option>
+            <option value="Manufacturer 1">Manufacturer 1</option>
+            <option value="Manufacturer 2">Manufacturer 2</option>
+            <option value="Manufacturer 3">Manufacturer 3</option>
+            <option value="Manufacturer 4">Manufacturer 4</option>
+            <option value="Manufacturer 5">Manufacturer 5</option>
+          </select>
+        </div>
       </div>
     </div>
   );
@@ -483,7 +520,7 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
         </div>
       </div>
       {/* Scrollable Content Area */}
-      <div className="flex-1 max-h-[600px] overflow-y-auto scrollbar-hide p-2"> {/* Removed maxHeight, flex-1 handles height */}
+      <div className="flex-1 max-h-[600px] overflow-y-auto scrollbar-hide p-2 pt-0"> {/* Removed maxHeight, flex-1 handles height */}
         <div className="grid grid-cols-3 gap-4">
           {dummyGoogleResults
             .filter(item =>
@@ -524,7 +561,7 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
 
   return (
     <div className={`absolute top-0 left-0 z-50 h-full w-[350px] bg-white shadow-2xl flex flex-col transform transition-all duration-700 ease-out ${isMounted ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"}`} style={{ maxHeight: '100vh' }}>
-      {!showGoogleSearch && !((editMode && itemToEdit)) && (
+      {!showGoogleSearch && !((editMode && itemToEdit))  && !showAddNew && (
         <div className="p-4 pb-24 flex flex-col gap-4">
           {/* Enhanced Selection Header - always visible */}
           <div 
@@ -712,7 +749,7 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
           {showAddNew ? (
             renderAddNewColor()
           ) : (
-            <div className="overflow-y-auto scrollbar-hide p-2" style={{ maxHeight: '383px' }}>
+            <div className="overflow-y-auto scrollbar-hide p-2 pt-0" style={{ maxHeight: '383px' }}>
               <div className="grid grid-cols-3 gap-4 relative z-0">
                 {filteredOptions.map((item, index) => (
                   <div
@@ -821,6 +858,16 @@ export default function MaterialPanel({ title = "Cabinets", onCancel, onConfirm,
           {/* Make the whole edit form scrollable, with increased height */}
           <div className="flex-1  scrollbar-hide ">
             {renderEditLayer()}
+          </div>
+        </div>
+      )}
+        {showAddNew && !showGoogleSearch && (
+        <div className="flex-1 flex flex-col p-4 pb-24 gap-4 min-h-0 max-h-[85vh]">
+          <div className="mb-2 flex-shrink-0">
+            <h2 className="font-bold text-md text-slate-800">Add New Layer</h2>
+          </div>
+          <div className="flex-1 scrollbar-hide">
+            {renderAddNewColor()}
           </div>
         </div>
       )}
