@@ -6,16 +6,24 @@ import MaterialPanel from "./MaterialPanel";
 const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }) => {
   // Initial data setup
   const initialOptions = [
-    { label: "Cabinets", value: "Avalon Painted White" },
-    { label: "Countertops", value: "Ethereal Haze" },
-    { label: "Wall Tile", value: "Multitude Wave White" },
-    { label: "Shower Pan", value: "Union Platinum White" },
-    { label: "Flooring", value: "Union Platinum White" },
-    { label: "Plumbing", value: "Pitch Package Chrome" },
-    { label: "Hardware", value: "Knobs  Polished Chrome" },
+    // { label: "Cabinets", value: "Avalon Painted White" },
+    // { label: "Countertops", value: "Ethereal Haze" },
+    // { label: "Wall Tile", value: "Multitude Wave White" },
+    // { label: "Shower Pan", value: "Union Platinum White" },
+    // { label: "Flooring", value: "Union Platinum White" },
+    // { label: "Plumbing", value: "Pitch Package Chrome" },
+    // { label: "Hardware", value: "Knobs  Polished Chrome" },
+    { label: "Soho Kitchen", value: "" },
+{ label: "Chelsea Kitchen", value: "" },
+{ label: "Riverdale Kitchen", value: "" },
+{ label: "Park Avenue Kitchen", value: "" },
+{ label: "Greenwich Kitchen", value: "" },
+{ label: "Hudson Kitchen", value: "" },
+{ label: "Tribeca Kitchen", value: "" }
+
   ];
 
-  const [headerTitle, setHeaderTitle] = useState("SOHO KITCHEN");
+  const [headerTitle, setHeaderTitle] = useState("KITCHEN SCHEMES");
   const [designOptions, setDesignOptions] = useState(initialOptions);
   const [isMounted, setIsMounted] = useState(false);
   const [activeIndex, setActiveIndex] = useState(null);
