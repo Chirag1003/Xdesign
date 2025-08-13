@@ -496,7 +496,7 @@ const toggleFullPreview = () => {
             <div className="absolute top-2 left-11 bg-[#00000047] px-6 py-2 rounded-lg shadow border border-white/20 backdrop-blur-sm flex items-center gap-2 text-white text-xs" >
               <img src={timber}
                 alt="Powered by Biorev Studio"
-                className="w-56 h-8 opacity-90 rounded" />
+                className="w-[12.9rem] h-8 opacity-90 rounded" />
             </div>
           )}
           {showTiles && tileSelected && (
