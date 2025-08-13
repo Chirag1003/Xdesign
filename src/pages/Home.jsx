@@ -493,10 +493,10 @@ const toggleFullPreview = () => {
 
           {/* Branding: top left by default, moves to right of MaterialPanel only after a tile is selected */}
           {(!showTiles || (showTiles && !tileSelected)) && (
-            <div className="absolute top-0 left-0 bg-[#00000047] px-4 py-2 rounded-lg shadow border border-white/20 backdrop-blur-sm flex items-center gap-2 text-white text-xs" >
+            <div className="absolute top-2 left-11 bg-[#00000047] px-6 py-2 rounded-lg shadow border border-white/20 backdrop-blur-sm flex items-center gap-2 text-white text-xs" >
               <img src={timber}
                 alt="Powered by Biorev Studio"
-                className="w-32 opacity-90 rounded" />
+                className="w-56 h-8 opacity-90 rounded" />
             </div>
           )}
           {showTiles && tileSelected && (
@@ -506,7 +506,7 @@ const toggleFullPreview = () => {
                 className="w-32 opacity-90 rounded" />
             </div>
           )}
- <div className="absolute bottom-0 right-0 bg-[#00000047] px-4 py-2 rounded-lg shadow border border-white/20 backdrop-blur-sm flex items-center gap-2 text-white text-xs">
+ <div className="absolute bottom-6 right-2 bg-[#00000047] px-4 py-2 rounded-lg shadow border border-white/20 backdrop-blur-sm flex items-center gap-2 text-white text-xs">
  {/* <img src={timber}
    alt="Powered by Biorev Studio"
    className="w-28 opacity-90 rounded" /> */}
