@@ -1,28 +1,35 @@
-
 import { useEffect, useRef, useState } from "react";
 import { Pencil } from "lucide-react";
 import MaterialPanel from "./MaterialPanel";
 
 const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }) => {
-  // Initial data setup
+  // STEP 1: Kitchen schemes (initial)
   const initialOptions = [
-    // { label: "Cabinets", value: "Avalon Painted White" },
-    // { label: "Countertops", value: "Ethereal Haze" },
-    // { label: "Wall Tile", value: "Multitude Wave White" },
-    // { label: "Shower Pan", value: "Union Platinum White" },
-    // { label: "Flooring", value: "Union Platinum White" },
-    // { label: "Plumbing", value: "Pitch Package Chrome" },
-    // { label: "Hardware", value: "Knobs  Polished Chrome" },
     { label: "Soho Kitchen", value: "" },
-{ label: "Chelsea Kitchen", value: "" },
-{ label: "Riverdale Kitchen", value: "" },
-{ label: "Park Avenue Kitchen", value: "" },
-{ label: "Greenwich Kitchen", value: "" },
-{ label: "Hudson Kitchen", value: "" },
-{ label: "Tribeca Kitchen", value: "" }
-
+    { label: "Chelsea Kitchen", value: "" },
+    { label: "Riverdale Kitchen", value: "" },
+    { label: "Park Avenue Kitchen", value: "" },
+    { label: "Greenwich Kitchen", value: "" },
+    { label: "Hudson Kitchen", value: "" },
+    { label: "Tribeca Kitchen", value: "" },
   ];
 
+  // STEP 2: Categories shown after a scheme is chosen
+  const categoryOptions = [
+    { label: "Cabinets", value: "Avalon Painted White" },
+    { label: "Countertops", value: "Ethereal Haze" },
+    { label: "Wall Tile", value: "Multitude Wave White" },
+    { label: "Shower Pan", value: "Union Platinum White" },
+    { label: "Flooring", value: "Union Platinum White" },
+    { label: "Plumbing", value: "Pitch Package Chrome" },
+    { label: "Hardware", value: "Knobs  Polished Chrome" },
+  ];
+
+  // flow state
+  const [stage, setStage] = useState("schemes"); // "schemes" | "categories"
+  const [selectedScheme, setSelectedScheme] = useState("");
+
+  // UI states
   const [headerTitle, setHeaderTitle] = useState("KITCHEN SCHEMES");
   const [designOptions, setDesignOptions] = useState(initialOptions);
   const [isMounted, setIsMounted] = useState(false);
@@ -33,16 +40,14 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
   const [editValue, setEditValue] = useState("");
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [dropIndex, setDropIndex] = useState(null);
-  const [editImage, setEditImage] = useState(null);
+  // const [editImage, setEditImage] = useState(null);
   const tilesContainerRef = useRef(null);
   const editingRef = useRef(null);
   const originalEditLabel = useRef("");
   const originalEditValue = useRef("");
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsMounted(true);
-    }, 100);
+    const timer = setTimeout(() => setIsMounted(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
@@ -52,7 +57,6 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
         handleEditSave();
       }
     }
-
     if (editingIndex !== null) {
       document.addEventListener("mousedown", handleClickOutside);
       return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -61,7 +65,6 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
 
   useEffect(() => {
     if (draggedIndex === null) return;
-
     const container = tilesContainerRef.current;
     if (!container) return;
 
@@ -73,17 +76,12 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
       const rect = container.getBoundingClientRect();
       const yPos = e.clientY - rect.top;
       const height = rect.height;
-
       if (scrollInterval) clearInterval(scrollInterval);
 
       if (yPos < height * scrollThreshold) {
-        scrollInterval = setInterval(() => {
-          container.scrollTop -= scrollSpeed;
-        }, 16);
+        scrollInterval = setInterval(() => (container.scrollTop -= scrollSpeed), 16);
       } else if (yPos > height * (1 - scrollThreshold)) {
-        scrollInterval = setInterval(() => {
-          container.scrollTop += scrollSpeed;
-        }, 16);
+        scrollInterval = setInterval(() => (container.scrollTop += scrollSpeed), 16);
       }
     };
 
@@ -101,29 +99,31 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
     };
   }, [draggedIndex]);
 
+  // drag handlers (keep drag only on schemes)
   const handleDragStart = (e, index) => {
+    if (stage !== "schemes") return;
     e.dataTransfer.setData("text/plain", index.toString());
     setDraggedIndex(index);
     e.currentTarget.style.opacity = "0.4";
   };
 
   const handleDragOver = (e, index) => {
+    if (stage !== "schemes") return;
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
     setDropIndex(index);
   };
 
   const handleDrop = (e, index) => {
+    if (stage !== "schemes") return;
     e.preventDefault();
     const dragIndex = parseInt(e.dataTransfer.getData("text/plain"));
-
     if (dragIndex === index) {
       setDropIndex(null);
       return;
     }
-
-    setDesignOptions(prevOptions => {
-      const newOptions = [...prevOptions];
+    setDesignOptions((prev) => {
+      const newOptions = [...prev];
       const [draggedItem] = newOptions.splice(dragIndex, 1);
       newOptions.splice(index, 0, draggedItem);
       return newOptions;
@@ -142,12 +142,15 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
   };
 
   const handleDragEnd = (e) => {
+    if (stage !== "schemes") return;
     e.currentTarget.style.opacity = "1";
     setDraggedIndex(null);
     setDropIndex(null);
   };
 
+  // edit handlers (ALLOW EDIT ONLY IN CATEGORIES STAGE)
   const handleEditStart = (index) => {
+    if (stage !== "categories") return; // hard-stop editing in schemes
     setEditingIndex(index);
     if (index === "header") {
       setEditLabel(headerTitle);
@@ -171,17 +174,16 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
     if (editingIndex === null) return;
 
     if (editingIndex === "header") {
-      setHeaderTitle(editLabel.trim() || "SOHO KITCHEN");
+      setHeaderTitle(
+        editLabel.trim() || (stage === "schemes" ? "KITCHEN SCHEMES" : selectedScheme.toUpperCase())
+      );
     } else if (editingIndex === "new") {
       if (editLabel.trim() && editValue.trim()) {
-        setDesignOptions(prev => [
-          ...prev,
-          { label: editLabel.trim(), value: editValue.trim() }
-        ]);
+        setDesignOptions((prev) => [...prev, { label: editLabel.trim(), value: editValue.trim() }]);
       }
     } else {
-      setDesignOptions(prevOptions => {
-        const updated = [...prevOptions];
+      setDesignOptions((prev) => {
+        const updated = [...prev];
         updated[editingIndex] = {
           label: editLabel.trim() || "Untitled",
           value: editValue.trim() || "N/A",
@@ -189,7 +191,6 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
         return updated;
       });
     }
-
     setEditingIndex(null);
   };
 
@@ -200,25 +201,42 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      handleEditSave();
-    } else if (e.key === "Escape") {
-      setEditingIndex(null);
-    }
+    if (e.key === "Enter") handleEditSave();
+    else if (e.key === "Escape") setEditingIndex(null);
   };
 
   const handleCancel = () => {
     setActiveIndex(null);
-    if (typeof onTileCancel === 'function') onTileCancel();
+    if (typeof onTileCancel === "function") onTileCancel();
+  };
+
+  // tile click → flow control
+  const handleTileClick = (index) => {
+    if (editingIndex === index) return;
+
+    if (stage === "schemes") {
+      const scheme = designOptions[index].label;
+      setSelectedScheme(scheme);
+      setHeaderTitle(scheme.toUpperCase());
+      setStage("categories");
+      setDesignOptions(categoryOptions);
+      setActiveIndex(null);
+      if (typeof onTileSelected === "function") onTileSelected();
+    } else {
+      // categories → open MaterialPanel
+      setActiveIndex(index);
+      if (typeof onTileSelected === "function") onTileSelected();
+    }
   };
 
   return (
     <>
       <div
-        className={`absolute top-[50px] left-0 z-50 w-[320px] p-5 space-y-4 pointer-events-auto transform transition-all duration-700 ease-out 
-        ${isMounted ? "translate-x-4 opacity-100" : "-translate-x-full opacity-0"}`}
+        className={`absolute top-[50px] left-0 z-50 w-[320px] p-5 space-y-4 pointer-events-auto transform transition-all duration-700 ease-out ${
+          isMounted ? "translate-x-4 opacity-100" : "-translate-x-full opacity-0"
+        }`}
       >
-        {/* Header */}
+        {/* Header (NO back button in categories, as requested) */}
         <div
           className={`group relative bg-white text-slate-800 font-bold text-base rounded-2xl text-center shadow-lg border-2 border-slate-200 backdrop-blur-sm py-2 w-[270px] transition-all duration-500 ${
             isMounted ? "scale-100 opacity-100" : "scale-95 opacity-0"
@@ -242,41 +260,57 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
             <div className="relative z-10 tracking-wide">{headerTitle}</div>
           )}
 
-          {editingIndex === "header" ? (
-            <button
-              type="button"
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-red-300 transition w-6 h-6 flex items-center justify-center z-20"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleEditCancel();
-              }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500 cursor-pointer opacity-70 hover:text-gray-700 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          ) : (
-            (hoveredIndex === "header" && editingIndex !== "header") && (
-              <button
-                type="button"
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300 transition w-6 h-6 flex items-center justify-center z-20"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleEditStart("header");
-                }}
-              >
-                <Pencil className="w-4 h-4 text-gray-500 cursor-pointer opacity-70 hover:opacity-100 transition-opacity" />
-              </button>
-            )
+          {/* Header edit pencil only in categories stage */}
+          {stage === "categories" && (
+            <>
+              {editingIndex === "header" ? (
+                <button
+                  type="button"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-red-300 transition w-6 h-6 flex items-center justify-center z-20"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditCancel();
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 text-gray-500 cursor-pointer opacity-70 hover:text-gray-700 transition-colors"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              ) : (
+                hoveredIndex === "header" &&
+                editingIndex !== "header" && (
+                  <button
+                    type="button"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300 transition w-6 h-6 flex items-center justify-center z-20"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditStart("header");
+                    }}
+                  >
+                    <Pencil className="w-4 h-4 text-gray-500 cursor-pointer opacity-70 hover:opacity-100 transition-opacity" />
+                  </button>
+                )
+              )}
+            </>
           )}
         </div>
 
         {/* Tiles container */}
-        <div className="max-h-[64vh] overflow-y-auto scrollbar-hide pr-2 snap-y snap-mandatory" ref={tilesContainerRef}>
+        <div
+          className="max-h-[64vh] overflow-y-auto scrollbar-hide pr-2 snap-y snap-mandatory"
+          ref={tilesContainerRef}
+        >
           {designOptions.map((item, index) => (
             <div
               key={`${item.label}-${index}`}
-              draggable
+              draggable={stage === "schemes"} // drag only on schemes
               onDragStart={(e) => handleDragStart(e, index)}
               onDragOver={(e) => handleDragOver(e, index)}
               onDrop={(e) => handleDrop(e, index)}
@@ -300,12 +334,7 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
               }`}
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
-              onClick={() => {
-                if (editingIndex !== index) {
-                  setActiveIndex(index);
-                  if (typeof onTileSelected === "function") onTileSelected();
-                }
-              }}
+              onClick={() => handleTileClick(index)}
               style={{
                 transition: "all 0.3s ease",
                 opacity: isMounted ? 1 : 0,
@@ -323,32 +352,45 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
                   >
                     <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/50 to-transparent"></div>
                     <span className="relative z-10">IMG</span>
-                    <div className={`absolute inset-0 rounded-xl border-2 border-blue-400/0 transition-all duration-300 ${
-                      hoveredIndex === index ? "border-blue-400/30" : ""
-                    }`}></div>
-                    {/* Removed upload icon from image corner on hover */}
-                    {/* Upload option overlay with new SVG design when editing */}
-                    {editingIndex === index && (
+                    <div
+                      className={`absolute inset-0 rounded-xl border-2 border-blue-400/0 transition-all duration-300 ${
+                        hoveredIndex === index ? "border-blue-400/30" : ""
+                      }`}
+                    ></div>
+
+                    {/* Upload overlay only while editing AND only in categories stage */}
+                    {stage === "categories" && editingIndex === index && (
                       <div className="absolute inset-0 flex items-center justify-center bg-white/40 backdrop-blur-sm rounded-xl z-30">
                         <label className="cursor-pointer flex flex-col items-center">
-                          {/* Simple upload SVG icon with gray color and hover effect */}
                           <span className="group flex flex-col items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6  text-gray-500 group-hover:text-gray-700 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-6 w-6  text-gray-500 group-hover:text-gray-700 transition-colors"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                            >
                               <path strokeLinecap="round" strokeLinejoin="round" d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7" />
                               <path strokeLinecap="round" strokeLinejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4" />
                             </svg>
-                            <span className="text-xs text-gray-700 font-semibold mt-1 group-hover:text-gray-900 transition-colors">Upload</span>
+                            <span className="text-xs text-gray-700 font-semibold mt-1 group-hover:text-gray-900 transition-colors">
+                              Upload
+                            </span>
                           </span>
-                          <input type="file" accept="image/*" className="hidden" onChange={(e) => {
-                            const file = e.target.files[0];
-                            if (file) {
-                              const reader = new FileReader();
-                              reader.onload = (ev) => {
-                                setEditImage(ev.target.result);
-                              };
-                              reader.readAsDataURL(file);
-                            }
-                          }} />
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                const reader = new FileReader();
+                                // reader.onload = (ev) => setEditImage(ev.target.result);
+                                reader.readAsDataURL(file);
+                              }
+                            }}
+                          />
                         </label>
                       </div>
                     )}
@@ -373,44 +415,64 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
                       </>
                     ) : (
                       <>
-                        <h4 className={`font-bold text-base mb-1 transition-colors duration-200 ${
-                          activeIndex === index ? "text-blue-700" : "text-slate-800 group-hover:text-slate-900"
-                        }`}>
+                        <h4
+                          className={`font-bold text-base mb-1 transition-colors duration-200 ${
+                            activeIndex === index
+                              ? "text-blue-700"
+                              : "text-slate-800 group-hover:text-slate-900"
+                          }`}
+                        >
                           {item.label}
                         </h4>
-                        <p className={`text-sm leading-relaxed transition-colors duration-200 ${
-                          activeIndex === index ? "text-blue-600" : "text-slate-600 group-hover:text-slate-700"
-                        }`}>
+                        <p
+                          className={`text-sm leading-relaxed transition-colors duration-200 ${
+                            activeIndex === index
+                              ? "text-blue-600"
+                              : "text-slate-600 group-hover:text-slate-700"
+                          }`}
+                        >
                           {item.value}
                         </p>
                       </>
                     )}
                   </div>
 
-                  {editingIndex === index ? (
-                    <button
-                      type="button"
-                      className="absolute top-1 right-1 w-6 h-6 p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-red-300 transition flex items-center justify-center z-40"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleEditCancel();
-                      }}
-                    >
-                      {/* Cross SVG */}
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500 cursor-pointer opacity-70 hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  ) : (
-                    (hoveredIndex === index && editingIndex !== index) && (
-                      <Pencil
-                        className="absolute top-2 right-2 w-4 h-4  text-gray-500 cursor-pointer hover:bg-slate-100 opacity-70 hover:opacity-100 transition-opacity z-20"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEditStart(index);
-                        }}
-                      />
-                    )
+                  {/* Pencil ONLY in categories stage */}
+                  {stage === "categories" && (
+                    <>
+                      {editingIndex === index ? (
+                        <button
+                          type="button"
+                          className="absolute top-1 right-1 w-6 h-6 p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-red-300 transition flex items-center justify-center z-40"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditCancel();
+                          }}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 text-gray-500 cursor-pointer opacity-70 hover:opacity-100 transition-opacity"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      ) : (
+                        hoveredIndex === index &&
+                        editingIndex !== index && (
+                          <Pencil
+                            className="absolute top-2 right-2 w-4 h-4 text-gray-500 cursor-pointer hover:bg-slate-100 opacity-70 hover:opacity-100 transition-opacity z-20"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditStart(index);
+                            }}
+                          />
+                        )
+                      )}
+                    </>
                   )}
                 </div>
 
@@ -421,98 +483,30 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
                 )}
               </div>
 
-              <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-b-2xl transform origin-left transition-all duration-300 ${
-                activeIndex === index 
-                  ? "scale-x-100 opacity-100" 
-                  : hoveredIndex === index
-                  ? "scale-x-75 opacity-60"
-                  : "scale-x-0 opacity-0"
-              }`}></div>
+              <div
+                className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-b-2xl transform origin-left transition-all duration-300 ${
+                  activeIndex === index
+                    ? "scale-x-100 opacity-100"
+                    : hoveredIndex === index
+                    ? "scale-x-75 opacity-60"
+                    : "scale-x-0 opacity-0"
+                }`}
+              ></div>
             </div>
           ))}
 
-          {/* Add New Option Button */}
-          <div
-            className="bg-white/95 backdrop-blur-sm border-2 border-dashed border-slate-300 rounded-2xl shadow-md cursor-pointer hover:shadow-lg hover:border-blue-400 transition-all p-4 text-center"
-            onClick={() => {
-              if (editingIndex !== "new") {
-                handleEditStart("new");
-              }
-            }}
-          >
-            {editingIndex === "new" ? (
-              <div className="space-y-2" ref={editingRef}>
-                <input
-                  type="text"
-                  placeholder="Enter label"
-                  className="w-full text-sm px-2 py-1 rounded bg-white border border-slate-300"
-                  value={editLabel}
-                  onChange={(e) => setEditLabel(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  autoFocus
-                />
-                <input
-                  type="text"
-                  placeholder="Enter value"
-                  className="w-full text-sm px-2 py-1 rounded bg-white border border-slate-300"
-                  value={editValue}
-                  onChange={(e) => setEditValue(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="w-full text-sm px-2 py-1 rounded bg-white border border-slate-300"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onload = (ev) => {
-                        setEditImage(ev.target.result);
-                      };
-                      reader.readAsDataURL(file);
-                    }
-                  }}
-                />
-                {editImage && (
-                  <img src={editImage} alt="Preview" className="w-16 h-16 object-cover rounded mx-auto" />
-                )}
-                <button
-                  className="w-full py-1 px-2 bg-blue-500 hover:bg-blue-600 text-white rounded shadow"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (editLabel.trim() && editValue.trim() && editImage) {
-                      setDesignOptions(prev => [
-                        ...prev,
-                        { label: editLabel.trim(), value: editValue.trim(), image: editImage }
-                      ]);
-                      setEditingIndex(null);
-                      setEditImage(null);
-                    }
-                  }}
-                  disabled={!(editLabel.trim() && editValue.trim() && editImage)}
-                >
-                  Add
-                </button>
-              </div>
-            ) : (
-              <span className="text-blue-600 font-semibold">+ Add New Option</span>
-            )}
-            {editingIndex === "new" && (
-            <button
-              type="button"
-              className="absolute top-1 right-1 p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-red-300 transition flex items-center justify-center z-20"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleEditCancel();
+          {/* Add New Option (only in schemes stage) */}
+          {stage === "schemes" && (
+            <div
+              className="relative bg-white/95 backdrop-blur-sm border-2 border-dashed border-slate-300 rounded-2xl shadow-md cursor-pointer hover:shadow-lg hover:border-blue-400 transition-all p-4 text-center"
+              onClick={() => {
+                if (editingIndex !== "new") handleEditStart("new");
               }}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500 cursor-pointer opacity-70 hover:text-blue-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+              {/* This won't open because handleEditStart guards stage !== 'categories'. */}
+              <span className="text-slate-400 font-semibold">+ Add New Option</span>
+            </div>
           )}
-          </div>
         </div>
       </div>
 
