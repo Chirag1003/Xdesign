@@ -24,21 +24,19 @@ function EditTabs({ itemToEdit, setItemToEdit }) {
     <div className="w-full">
       <div className="flex border-b mb-2">
         <button
-          className={`flex-1 py-2 text-sm font-semibold border-b-2 transition-all duration-150 ${
-            tab === "Color"
+          className={`flex-1 py-2 text-sm font-semibold border-b-2 transition-all duration-150 ${tab === "Color"
               ? "border-blue-500 text-blue-700 bg-blue-50"
               : "border-transparent text-slate-600 bg-white"
-          }`}
+            }`}
           onClick={() => setTab("Color")}
         >
           Color
         </button>
         <button
-          className={`flex-1 py-2 text-sm font-semibold border-b-2 transition-all duration-150 ${
-            tab === "Structure"
+          className={`flex-1 py-2 text-sm font-semibold border-b-2 transition-all duration-150 ${tab === "Structure"
               ? "border-blue-500 text-blue-700 bg-blue-50"
               : "border-transparent text-slate-600 bg-white"
-          }`}
+            }`}
           onClick={() => setTab("Structure")}
         >
           Structure
@@ -265,20 +263,20 @@ export default function MaterialPanel({
   const handleEdit = (item, e) => {
     if (e) e.stopPropagation();
     // Track original id so save works on the correct row
-     // Track original id so save works on the correct row + safe defaults
-   const safeHex = (h) => /^#[0-9A-Fa-f]{6}$/.test(h || "") ? h : "#ffffff";
-   const withDefaults = {
-     _originalId: item._id,
-     name: item.name || "",
-    color: safeHex(item.color),
-     productCode: item.productCode || "",
+    // Track original id so save works on the correct row + safe defaults
+    const safeHex = (h) => /^#[0-9A-Fa-f]{6}$/.test(h || "") ? h : "#ffffff";
+    const withDefaults = {
+      _originalId: item._id,
+      name: item.name || "",
+      color: safeHex(item.color),
+      productCode: item.productCode || "",
       manufacturer: item.manufacturer || "",
- designType: item.designType || "Color",
-     option: item.option || "Cabinet",
+      designType: item.designType || "Color",
+      option: item.option || "Cabinet",
       image: item.image || null,
-   };
-  setItemToEdit(withDefaults);
-    
+    };
+    setItemToEdit(withDefaults);
+
     setEditMode(true);
     setActiveMenuIndex(null);
     setShowManageLayers(false);
@@ -403,11 +401,10 @@ export default function MaterialPanel({
                 {["All", "US", "EU", "Asia"].map((region) => (
                   <button
                     key={region}
-                    className={`w-full text-left rounded-lg px-3 py-1.5 text-sm font-medium ${
-                      googleRegion === region
+                    className={`w-full text-left rounded-lg px-3 py-1.5 text-sm font-medium ${googleRegion === region
                         ? "bg-blue-100 text-blue-700"
                         : "hover:bg-slate-100 text-slate-700"
-                    }`}
+                      }`}
                     onClick={() => {
                       setGoogleRegion(region);
                       setShowRegionFilter(false);
@@ -454,8 +451,8 @@ export default function MaterialPanel({
             (googleRegion === "All" || item.region === googleRegion) &&
             item.name.toLowerCase().includes(googleSearchTerm.toLowerCase())
         ).length === 0 && (
-          <div className="text-center text-slate-400 text-sm mt-8">No results found.</div>
-        )}
+            <div className="text-center text-slate-400 text-sm mt-8">No results found.</div>
+          )}
       </div>
     </div>
   );
@@ -504,21 +501,19 @@ export default function MaterialPanel({
         <div className="w-full">
           <div className="flex border-b mb-2">
             <button
-              className={`flex-1 py-2 text-sm font-semibold border-b-2 transition-all duration-150 ${
-                newTab === "Color"
+              className={`flex-1 py-2 text-sm font-semibold border-b-2 transition-all duration-150 ${newTab === "Color"
                   ? "border-blue-500 text-blue-700 bg-blue-50"
                   : "border-transparent text-slate-600 bg-white"
-              }`}
+                }`}
               onClick={() => setNewTab("Color")}
             >
               Color
             </button>
             <button
-              className={`flex-1 py-2 text-sm font-semibold border-b-2 transition-all duration-150 ${
-                newTab === "Structure"
+              className={`flex-1 py-2 text-sm font-semibold border-b-2 transition-all duration-150 ${newTab === "Structure"
                   ? "border-blue-500 text-blue-700 bg-blue-50"
                   : "border-transparent text-slate-600 bg-white"
-              }`}
+                }`}
               onClick={() => setNewTab("Structure")}
             >
               Structure
@@ -760,451 +755,448 @@ export default function MaterialPanel({
   /* ===========================
      Manage Layers (FULL SCREEN)
      =========================== */
- /* ===========================
-   Manage Layers (FULL SCREEN)
-   =========================== */
-const renderManageLayersPage = () => {
- 
+  /* ===========================
+    Manage Layers (FULL SCREEN)
+    =========================== */
+  const renderManageLayersPage = () => {
 
-  const manufacturerList = [
-    "All Manufacturer",
-    ...Array.from(new Set(cabinetOptions.map((c) => c.manufacturer || "-"))),
-  ];
 
-  const rows = cabinetOptions.filter((r) => {
-    const passName =
-      r.name.toLowerCase().includes(manageSearch.toLowerCase()) ||
-      (r.productCode || "").toLowerCase().includes(manageSearch.toLowerCase());
-    const passMfg =
-      manageManufacturer === "All Manufacturer" ||
-      (r.manufacturer || "-") === manageManufacturer;
-    return passName && passMfg;
-  });
+    const manufacturerList = [
+      "All Manufacturer",
+      ...Array.from(new Set(cabinetOptions.map((c) => c.manufacturer || "-"))),
+    ];
 
-  const total = rows.length;
-  const totalPages = Math.max(1, Math.ceil(total / managePageSize));
-  const currentPage = Math.min(managePage, totalPages);
-  const startIdx = (currentPage - 1) * managePageSize;
-  const pageRows = rows.slice(startIdx, startIdx + managePageSize);
-
-  const allOnPageSelected =
-    pageRows.length > 0 && pageRows.every((r) => selectedIds.has(r._id));
-
-  const toggleRow = (id) => {
-    setSelectedIds((s) => {
-      const copy = new Set(s);
-      copy.has(id) ? copy.delete(id) : copy.add(id);
-      return copy;
+    const rows = cabinetOptions.filter((r) => {
+      const passName =
+        r.name.toLowerCase().includes(manageSearch.toLowerCase()) ||
+        (r.productCode || "").toLowerCase().includes(manageSearch.toLowerCase());
+      const passMfg =
+        manageManufacturer === "All Manufacturer" ||
+        (r.manufacturer || "-") === manageManufacturer;
+      return passName && passMfg;
     });
-  };
-  const selectPage = (list) => {
-    setSelectedIds((s) => {
-      const copy = new Set(s);
-      for (const r of list) copy.add(r._id);
-      return copy;
-    });
-  };
-  const deselectPage = (list) => {
-    setSelectedIds((s) => {
-      const copy = new Set(s);
-      for (const r of list) copy.delete(r._id);
-      return copy;
-    });
-  };
 
-  const handleBulkDelete = () => {
-    if (selectedIds.size === 0) return;
-    setCabinetOptions((prev) => prev.filter((r) => !selectedIds.has(r._id)));
-    setSelectedIds(new Set());
-    showToast && showToast("Deleted", "Selected layers removed.");
-    setHasChanges(true);
-  };
+    const total = rows.length;
+    const totalPages = Math.max(1, Math.ceil(total / managePageSize));
+    const currentPage = Math.min(managePage, totalPages);
+    const startIdx = (currentPage - 1) * managePageSize;
+    const pageRows = rows.slice(startIdx, startIdx + managePageSize);
 
-  const handleBulkUploadAdd = (rowsToAdd) => {
-    const shaped = rowsToAdd.map((r, i) => ({
-      _id:
-        typeof crypto !== "undefined" && crypto.randomUUID
-          ? crypto.randomUUID()
-          : String(Date.now() + i),
-      ...r,
-    }));
-    setCabinetOptions((prev) => [...shaped, ...prev]);
-    showToast && showToast("Uploaded", `${rowsToAdd.length} layer(s) added.`);
-    setHasChanges(true);
-  };
+    const allOnPageSelected =
+      pageRows.length > 0 && pageRows.every((r) => selectedIds.has(r._id));
 
-  return (
-    <div className="fixed inset-0 z-[9999] bg-[#f7f8fb] flex">
-      <div className="flex-1 m-4 rounded-2xl bg-white shadow-lg border border-slate-200 flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between px-5 pt-4">
-          <h3 className="text-xl font-semibold flex items-center gap-2">
-            Manage Layer <span className="text-slate-400">-</span>
-            <span className="text-blue-600 font-bold">Door</span>
-          </h3>
+    const toggleRow = (id) => {
+      setSelectedIds((s) => {
+        const copy = new Set(s);
+        copy.has(id) ? copy.delete(id) : copy.add(id);
+        return copy;
+      });
+    };
+    const selectPage = (list) => {
+      setSelectedIds((s) => {
+        const copy = new Set(s);
+        for (const r of list) copy.add(r._id);
+        return copy;
+      });
+    };
+    const deselectPage = (list) => {
+      setSelectedIds((s) => {
+        const copy = new Set(s);
+        for (const r of list) copy.delete(r._id);
+        return copy;
+      });
+    };
 
-          {/* 🔹 Edit toggle + Save Changes */}
-          <div className="ml-4 flex items-center gap-3 text-sm">
-            <span className="text-slate-600 font-medium text-lg">Edit</span>
-            <label className="inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                className="sr-only peer"
-                checked={showBulkEdit}
-                onChange={(e) => {
-                  setShowBulkEdit(e.target.checked);
-                  if (!e.target.checked) setHasChanges(false);
-                }}
-              />
-              <span
-                className={`relative w-11 h-6 rounded-full transition-colors duration-300 ${
-                  "bg-slate-200 peer-checked:bg-blue-600"
-                } before:content-[''] before:absolute before:top-0.5 before:left-0.5 before:w-5 before:h-5 before:rounded-full before:bg-white before:shadow before:transition-transform before:duration-300 ${
-                  showBulkEdit ? "peer-checked:before:translate-x-5" : ""
-                }`}
-              />
-            </label>
+    const handleBulkDelete = () => {
+      if (selectedIds.size === 0) return;
+      setCabinetOptions((prev) => prev.filter((r) => !selectedIds.has(r._id)));
+      setSelectedIds(new Set());
+      showToast && showToast("Deleted", "Selected layers removed.");
+      setHasChanges(true);
+    };
 
-            {showBulkEdit && (
+    const handleBulkUploadAdd = (rowsToAdd) => {
+      const shaped = rowsToAdd.map((r, i) => ({
+        _id:
+          typeof crypto !== "undefined" && crypto.randomUUID
+            ? crypto.randomUUID()
+            : String(Date.now() + i),
+        ...r,
+      }));
+      setCabinetOptions((prev) => [...shaped, ...prev]);
+      showToast && showToast("Uploaded", `${rowsToAdd.length} layer(s) added.`);
+      setHasChanges(true);
+    };
+
+    return (
+      <div className="fixed inset-0 z-[9999] bg-[#f7f8fb] flex">
+        <div className="flex-1 m-4 rounded-2xl bg-white shadow-lg border border-slate-200 flex flex-col overflow-hidden">
+          <div className="flex items-center justify-between px-5 pt-4">
+            <h3 className="text-xl font-semibold flex items-center gap-2">
+              Manage Layer <span className="text-slate-400">-</span>
+              <span className="text-blue-600 font-bold">Door</span>
+            </h3>
+
+            {/* 🔹 Edit toggle + Save Changes */}
+            <div className="ml-4 flex items-center gap-3 text-sm">
+              <span className="text-slate-600 font-medium text-lg">Edit</span>
+              <label className="inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={showBulkEdit}
+                  onChange={(e) => {
+                    setShowBulkEdit(e.target.checked);
+                    if (!e.target.checked) setHasChanges(false);
+                  }}
+                />
+                <span
+                  className={`relative w-11 h-6 rounded-full transition-colors duration-300 ${"bg-slate-200 peer-checked:bg-blue-600"
+                    } before:content-[''] before:absolute before:top-0.5 before:left-0.5 before:w-5 before:h-5 before:rounded-full before:bg-white before:shadow before:transition-transform before:duration-300 ${showBulkEdit ? "peer-checked:before:translate-x-5" : ""
+                    }`}
+                />
+              </label>
+
+              {showBulkEdit && (
+                <button
+                  disabled={!hasChanges}
+                  onClick={() => {
+                    setHasChanges(false);
+                    setShowBulkEdit(false); // 🔹 Auto close edit toggle
+                    showToast &&
+                      showToast("Saved", "Changes have been saved successfully.");
+                  }}
+                  className={`px-3 py-2 rounded-lg font-medium ${hasChanges
+                      ? "bg-blue-600 text-white hover:bg-blue-700"
+                      : "bg-blue-200 text-white cursor-not-allowed"
+                    }`}
+                >
+                  Save Changes
+                </button>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 ml-4">
               <button
-                disabled={!hasChanges}
-                onClick={() => {
-                  setHasChanges(false);
-                  setShowBulkEdit(false); // 🔹 Auto close edit toggle
-                  showToast &&
-                    showToast("Saved", "Changes have been saved successfully.");
-                }}
-                className={`px-3 py-2 rounded-lg font-medium ${
-                  hasChanges
-                    ? "bg-blue-600 text-white hover:bg-blue-700"
-                    : "bg-blue-200 text-white cursor-not-allowed"
-                }`}
+                className="px-3 py-2 rounded-lg bg-red-500/10 text-red-600 hover:bg-red-500/20 font-medium flex items-center gap-1 disabled:opacity-50"
+                onClick={handleBulkDelete}
+                disabled={selectedIds.size === 0}
               >
-                Save Changes
+                Delete
               </button>
-            )}
+
+              <button
+                className="px-3 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 font-medium flex items-center gap-1"
+                onClick={() => setShowBulkUpload(true)}
+              >
+                Bulk Upload
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2 ml-auto">
+              <button
+                onClick={() => setShowManageLayers(false)}
+                className="ml-2 w-9 h-9 rounded-lg bg-slate-200 hover:bg-slate-300 flex items-center justify-center"
+                title="Close"
+              >
+                ✕
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 ml-4">
-            <button
-              className="px-3 py-2 rounded-lg bg-red-500/10 text-red-600 hover:bg-red-500/20 font-medium flex items-center gap-1 disabled:opacity-50"
-              onClick={handleBulkDelete}
-              disabled={selectedIds.size === 0}
-            >
-              Delete
-            </button>
-
-            <button
-              className="px-3 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 font-medium flex items-center gap-1"
-              onClick={() => setShowBulkUpload(true)}
-            >
-              Bulk Upload
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2 ml-auto">
-            <button
-              onClick={() => setShowManageLayers(false)}
-              className="ml-2 w-9 h-9 rounded-lg bg-slate-200 hover:bg-slate-300 flex items-center justify-center"
-              title="Close"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-
-        {/* Toolbar */}
-        <div className="px-5 pb-3 mt-2 flex items-center gap-3">
-          <select
-            className="border rounded-lg px-3 py-2 bg-white"
-            value={managePageSize}
-            onChange={(e) => {
-              setManagePageSize(Number(e.target.value));
-              setManagePage(1);
-            }}
-          >
-            {[10, 25, 50].map((n) => (
-              <option key={n} value={n}>
-                Show {n}
-              </option>
-            ))}
-          </select>
-
-          <select
-            className="border rounded-lg px-3 py-2 bg-white"
-            value={manageManufacturer}
-            onChange={(e) => {
-              setManageManufacturer(e.target.value);
-              setManagePage(1);
-            }}
-          >
-            {manufacturerList.map((m) => (
-              <option key={m} value={m}>
-                {m}
-              </option>
-            ))}
-          </select>
-
-          <div className="ml-auto">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="border rounded-lg px-4 py-2 w-72"
-              value={manageSearch}
+          {/* Toolbar */}
+          <div className="px-5 pb-3 mt-2 flex items-center gap-3">
+            <select
+              className="border rounded-lg px-3 py-2 bg-white"
+              value={managePageSize}
               onChange={(e) => {
-                setManageSearch(e.target.value);
+                setManagePageSize(Number(e.target.value));
                 setManagePage(1);
               }}
-            />
-          </div>
-        </div>
+            >
+              {[10, 25, 50].map((n) => (
+                <option key={n} value={n}>
+                  Show {n}
+                </option>
+              ))}
+            </select>
 
-        {/* Table area */}
-        <div className="flex-1 overflow-auto px-5">
-          <div className="overflow-auto border rounded-xl">
-            <table className="min-w-full text-sm">
-              <thead className="bg-slate-50 text-slate-700 sticky top-0 z-10">
-                <tr>
-                  <th className="p-3 w-8">
-                    <input
-                      type="checkbox"
-                      checked={allOnPageSelected}
-                      onChange={(e) => {
-                        if (e.target.checked) selectPage(pageRows);
-                        else deselectPage(pageRows);
-                      }}
-                    />
-                  </th>
-                  <th className="p-3 text-left">Preview</th>
-                  <th className="p-3 text-left">Title</th>
-                  <th className="p-3 text-left">Product Code</th>
-                  <th className="p-3 text-left">Manufacturer</th>
-                  <th className="p-3 text-left">Hex</th>
-                  <th className="p-3 text-left">Grade</th>
-                  <th className="p-3 text-left">Design Type</th>
-                  <th className="p-3 text-left">Option</th>
-                  <th className="p-3 text-left">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {pageRows.map((r) => (
-                  <tr key={r._id} className="hover:bg-slate-50">
-                    <td className="p-3">
+            <select
+              className="border rounded-lg px-3 py-2 bg-white"
+              value={manageManufacturer}
+              onChange={(e) => {
+                setManageManufacturer(e.target.value);
+                setManagePage(1);
+              }}
+            >
+              {manufacturerList.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
+
+            <div className="ml-auto">
+              <input
+                type="text"
+                placeholder="Search..."
+                className="border rounded-lg px-4 py-2 w-72"
+                value={manageSearch}
+                onChange={(e) => {
+                  setManageSearch(e.target.value);
+                  setManagePage(1);
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Table area */}
+          <div className="flex-1 overflow-auto px-5">
+            <div className="overflow-auto border rounded-xl">
+              <table className="min-w-full text-sm">
+                <thead className="bg-slate-50 text-slate-700 sticky top-0 z-10">
+                  <tr>
+                    <th className="p-3 w-8">
                       <input
                         type="checkbox"
-                        checked={selectedIds.has(r._id)}
-                        onChange={() => toggleRow(r._id)}
-                      />
-                    </td>
-
-                    {/* Preview */}
-                    <td className="p-3">
-                      <div
-                        className="w-10 h-10 rounded-md border"
-                        style={{ backgroundColor: r.color }}
-                      />
-                    </td>
-
-                    {/* Editable fields */}
-                    <td className="p-3">
-                      {showBulkEdit ? (
-                        <input
-                          className="border rounded px-2 py-1 w-full text-sm"
-                          value={r.name}
-                          onChange={(e) => {
-                            setCabinetOptions((prev) =>
-                              prev.map((x) =>
-                                x._id === r._id ? { ...x, name: e.target.value } : x
-                              )
-                            );
-                            setHasChanges(true);
-                          }}
-                        />
-                      ) : (
-                        r.name
-                      )}
-                    </td>
-
-                    <td className="p-3">
-                      {showBulkEdit ? (
-                        <input
-                          className="border rounded px-2 py-1 w-full text-sm"
-                          value={r.productCode}
-                          onChange={(e) => {
-                            setCabinetOptions((prev) =>
-                              prev.map((x) =>
-                                x._id === r._id
-                                  ? { ...x, productCode: e.target.value }
-                                  : x
-                              )
-                            );
-                            setHasChanges(true);
-                          }}
-                        />
-                      ) : (
-                        r.productCode || "-"
-                      )}
-                    </td>
-
-                    <td className="p-3">
-                      {showBulkEdit ? (
-                        <input
-                          className="border rounded px-2 py-1 w-full text-sm"
-                          value={r.manufacturer}
-                          onChange={(e) => {
-                            setCabinetOptions((prev) =>
-                              prev.map((x) =>
-                                x._id === r._id
-                                  ? { ...x, manufacturer: e.target.value }
-                                  : x
-                              )
-                            );
-                            setHasChanges(true);
-                          }}
-                        />
-                      ) : (
-                        r.manufacturer || "-"
-                      )}
-                    </td>
-
-                    <td className="p-3">
-                      {showBulkEdit ? (
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="color"
-                            value={r.color}
-                            onChange={(e) => {
-                              setCabinetOptions((prev) =>
-                                prev.map((x) =>
-                                  x._id === r._id ? { ...x, color: e.target.value } : x
-                                )
-                              );
-                              setHasChanges(true);
-                            }}
-                          />
-                          <input
-                            className="border rounded px-2 py-1 text-sm flex-1"
-                            value={r.color}
-                            onChange={(e) => {
-                              setCabinetOptions((prev) =>
-                                prev.map((x) =>
-                                  x._id === r._id ? { ...x, color: e.target.value } : x
-                                )
-                              );
-                              setHasChanges(true);
-                            }}
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          <div
-                            className="w-5 h-5 rounded border"
-                            style={{ backgroundColor: r.color }}
-                          />
-                          <span className="text-xs font-mono">
-                            {r.color?.toUpperCase()}
-                          </span>
-                        </div>
-                      )}
-                    </td>
-
-                    <td className="p-3">
-                      {showBulkEdit ? (
-                        <input
-                          className="border rounded px-2 py-1 w-full text-sm"
-                          value={r.grade}
-                          onChange={(e) => {
-                            setCabinetOptions((prev) =>
-                              prev.map((x) =>
-                                x._id === r._id ? { ...x, grade: e.target.value } : x
-                              )
-                            );
-                            setHasChanges(true);
-                          }}
-                        />
-                      ) : (
-                        r.grade
-                      )}
-                    </td>
-
-                    {/* Read only fields */}
-                    <td className="p-3">
-                      <span className="px-2 py-1 rounded-full text-xs bg-slate-100">
-                        {r.designType || "Color"}
-                      </span>
-                    </td>
-                    <td className="p-3">
-                      <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-700">
-                        {r.option || "Cabinet"}
-                      </span>
-                    </td>
-
-                    <td className="p-3">
-                      <button
-                        className="px-2 py-1 rounded-md border text-red-600 hover:bg-red-50"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setCabinetOptions((prev) =>
-                            prev.filter((x) => x._id !== r._id)
-                          );
-                          setHasChanges(true);
-                          showToast &&
-                            showToast("Item Deleted", `${r.name} has been removed`);
+                        checked={allOnPageSelected}
+                        onChange={(e) => {
+                          if (e.target.checked) selectPage(pageRows);
+                          else deselectPage(pageRows);
                         }}
-                      >
-                        Delete
-                      </button>
-                    </td>
+                      />
+                    </th>
+                    <th className="p-3 text-left">Preview</th>
+                    <th className="p-3 text-left">Title</th>
+                    <th className="p-3 text-left">Product Code</th>
+                    <th className="p-3 text-left">Manufacturer</th>
+                    <th className="p-3 text-left">Hex</th>
+                    <th className="p-3 text-left">Grade</th>
+                    <th className="p-3 text-left">Design Type</th>
+                    <th className="p-3 text-left">Option</th>
+                    <th className="p-3 text-left">Action</th>
                   </tr>
-                ))}
-                {pageRows.length === 0 && (
-                  <tr>
-                    <td colSpan={10} className="p-6 text-center text-slate-400">
-                      No entries found.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y">
+                  {pageRows.map((r) => (
+                    <tr key={r._id} className="hover:bg-slate-50">
+                      <td className="p-3">
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.has(r._id)}
+                          onChange={() => toggleRow(r._id)}
+                        />
+                      </td>
+
+                      {/* Preview */}
+                      <td className="p-3">
+                        <div
+                          className="w-10 h-10 rounded-md border"
+                          style={{ backgroundColor: r.color }}
+                        />
+                      </td>
+
+                      {/* Editable fields */}
+                      <td className="p-3">
+                        {showBulkEdit ? (
+                          <input
+                            className="border rounded px-2 py-1 w-full text-sm"
+                            value={r.name}
+                            onChange={(e) => {
+                              setCabinetOptions((prev) =>
+                                prev.map((x) =>
+                                  x._id === r._id ? { ...x, name: e.target.value } : x
+                                )
+                              );
+                              setHasChanges(true);
+                            }}
+                          />
+                        ) : (
+                          r.name
+                        )}
+                      </td>
+
+                      <td className="p-3">
+                        {showBulkEdit ? (
+                          <input
+                            className="border rounded px-2 py-1 w-full text-sm"
+                            value={r.productCode}
+                            onChange={(e) => {
+                              setCabinetOptions((prev) =>
+                                prev.map((x) =>
+                                  x._id === r._id
+                                    ? { ...x, productCode: e.target.value }
+                                    : x
+                                )
+                              );
+                              setHasChanges(true);
+                            }}
+                          />
+                        ) : (
+                          r.productCode || "-"
+                        )}
+                      </td>
+
+                      <td className="p-3">
+                        {showBulkEdit ? (
+                          <input
+                            className="border rounded px-2 py-1 w-full text-sm"
+                            value={r.manufacturer}
+                            onChange={(e) => {
+                              setCabinetOptions((prev) =>
+                                prev.map((x) =>
+                                  x._id === r._id
+                                    ? { ...x, manufacturer: e.target.value }
+                                    : x
+                                )
+                              );
+                              setHasChanges(true);
+                            }}
+                          />
+                        ) : (
+                          r.manufacturer || "-"
+                        )}
+                      </td>
+
+                      <td className="p-3">
+                        {showBulkEdit ? (
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="color"
+                              value={r.color}
+                              onChange={(e) => {
+                                setCabinetOptions((prev) =>
+                                  prev.map((x) =>
+                                    x._id === r._id ? { ...x, color: e.target.value } : x
+                                  )
+                                );
+                                setHasChanges(true);
+                              }}
+                            />
+                            <input
+                              className="border rounded px-2 py-1 text-sm flex-1"
+                              value={r.color}
+                              onChange={(e) => {
+                                setCabinetOptions((prev) =>
+                                  prev.map((x) =>
+                                    x._id === r._id ? { ...x, color: e.target.value } : x
+                                  )
+                                );
+                                setHasChanges(true);
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="w-5 h-5 rounded border"
+                              style={{ backgroundColor: r.color }}
+                            />
+                            <span className="text-xs font-mono">
+                              {r.color?.toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                      </td>
+
+                      <td className="p-3">
+                        {showBulkEdit ? (
+                          <input
+                            className="border rounded px-2 py-1 w-full text-sm"
+                            value={r.grade}
+                            onChange={(e) => {
+                              setCabinetOptions((prev) =>
+                                prev.map((x) =>
+                                  x._id === r._id ? { ...x, grade: e.target.value } : x
+                                )
+                              );
+                              setHasChanges(true);
+                            }}
+                          />
+                        ) : (
+                          r.grade
+                        )}
+                      </td>
+
+                      {/* Read only fields */}
+                      <td className="p-3">
+                        <span className="px-2 py-1 rounded-full text-xs bg-slate-100">
+                          {r.designType || "Color"}
+                        </span>
+                      </td>
+                      <td className="p-3">
+                        <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-700">
+                          {r.option || "Cabinet"}
+                        </span>
+                      </td>
+
+                      <td className="p-3">
+                        <button
+                          className="px-2 py-1 rounded-md border text-red-600 hover:bg-red-50"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCabinetOptions((prev) =>
+                              prev.filter((x) => x._id !== r._id)
+                            );
+                            setHasChanges(true);
+                            showToast &&
+                              showToast("Item Deleted", `${r.name} has been removed`);
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {pageRows.length === 0 && (
+                    <tr>
+                      <td colSpan={10} className="p-6 text-center text-slate-400">
+                        No entries found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Footer / Pagination */}
+          <div className="px-5 py-3 bg-white border-t border-slate-200 flex items-center justify-between">
+            <div className="text-sm text-slate-500">
+              Showing {Math.min(total, startIdx + 1)} to{" "}
+              {Math.min(total, startIdx + pageRows.length)} of {total} entries
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                className="w-8 h-8 rounded-md border hover:bg-slate-100 disabled:opacity-50"
+                disabled={currentPage <= 1}
+                onClick={() => setManagePage((p) => Math.max(1, p - 1))}
+              >
+                ‹
+              </button>
+              <span className="px-2 py-1 rounded-md bg-purple-600 text-white text-sm">
+                {currentPage}
+              </span>
+              <button
+                className="w-8 h-8 rounded-md border hover:bg-slate-100 disabled:opacity-50"
+                disabled={currentPage >= totalPages}
+                onClick={() => setManagePage((p) => Math.min(totalPages, p + 1))}
+              >
+                ›
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Footer / Pagination */}
-        <div className="px-5 py-3 bg-white border-t border-slate-200 flex items-center justify-between">
-          <div className="text-sm text-slate-500">
-            Showing {Math.min(total, startIdx + 1)} to{" "}
-            {Math.min(total, startIdx + pageRows.length)} of {total} entries
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              className="w-8 h-8 rounded-md border hover:bg-slate-100 disabled:opacity-50"
-              disabled={currentPage <= 1}
-              onClick={() => setManagePage((p) => Math.max(1, p - 1))}
-            >
-              ‹
-            </button>
-            <span className="px-2 py-1 rounded-md bg-purple-600 text-white text-sm">
-              {currentPage}
-            </span>
-            <button
-              className="w-8 h-8 rounded-md border hover:bg-slate-100 disabled:opacity-50"
-              disabled={currentPage >= totalPages}
-              onClick={() => setManagePage((p) => Math.min(totalPages, p + 1))}
-            >
-              ›
-            </button>
-          </div>
-        </div>
+        {/* Bulk Upload Modal */}
+        <BulkUploadModal
+          open={showBulkUpload}
+          onClose={() => setShowBulkUpload(false)}
+          onUpload={handleBulkUploadAdd}
+        />
       </div>
-
-      {/* Bulk Upload Modal */}
-      <BulkUploadModal
-        open={showBulkUpload}
-        onClose={() => setShowBulkUpload(false)}
-        onUpload={handleBulkUploadAdd}
-      />
-    </div>
-  );
-};
+    );
+  };
 
   /* ===========================
      END Manage Layers Page
@@ -1230,9 +1222,8 @@ const renderManageLayersPage = () => {
         renderManageLayersPage()
       ) : (
         <div
-          className={`absolute top-0 left-0 z-50 h-full w-[350px] bg-white shadow-2xl flex flex-col transform transition-all duration-700 ease-out ${
-            isMounted ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
-          }`}
+          className={`absolute top-0 left-0 z-50 h-full w-[350px] bg-white shadow-2xl flex flex-col transform transition-all duration-700 ease-out ${isMounted ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
+            }`}
           style={{ maxHeight: "100vh" }}
         >
           {/* MAIN MODE */}
@@ -1240,11 +1231,10 @@ const renderManageLayersPage = () => {
             <div className="p-4 pb-24 flex flex-col gap-4">
               {/* Selection Header */}
               <div
-                className={`flex items-center gap-4 relative p-4 border-2 rounded-2xl shadow-lg bg-gradient-to-r from-slate-50 to-white border-slate-200 transform transition-all duration-500 delay-200 ${
-                  isMounted
+                className={`flex items-center gap-4 relative p-4 border-2 rounded-2xl shadow-lg bg-gradient-to-r from-slate-50 to-white border-slate-200 transform transition-all duration-500 delay-200 ${isMounted
                     ? "translate-y-0 opacity-100 scale-100"
                     : "translate-y-4 opacity-0 scale-95"
-                }`}
+                  }`}
               >
                 <div
                   className="relative w-20 h-20 rounded-xl border-2 group overflow-hidden shadow-md transition-all duration-300 hover:shadow-lg hover:scale-105"
@@ -1284,9 +1274,8 @@ const renderManageLayersPage = () => {
 
               {/* Top controls (search/filter/sort) */}
               <div
-                className={`flex items-center px-2 justify-between transform transition-all duration-500 delay-300 ${
-                  isMounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-                } z-[9999] relative`}
+                className={`flex items-center px-2 justify-between transform transition-all duration-500 delay-300 ${isMounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+                  } z-[9999] relative`}
               >
                 {!showSearch && (
                   <h2 className="font-bold text-sm text-slate-800">All {title}</h2>
@@ -1354,11 +1343,10 @@ const renderManageLayersPage = () => {
                           <div className="relative">
                             <button
                               onClick={() => setShowFilter(!showFilter)}
-                              className={`flex items-center justify-center text-sm border-2 rounded-full w-10 h-10 transition-all duration-200 hover:scale-105 active:scale-95 z-50 ${
-                                showFilter
+                              className={`flex items-center justify-center text-sm border-2 rounded-full w-10 h-10 transition-all duration-200 hover:scale-105 active:scale-95 z-50 ${showFilter
                                   ? "border-gray-500 bg-gray-50 text-gray-600"
                                   : "border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300"
-                              }`}
+                                }`}
                               aria-label="Open filter"
                             >
                               <svg
@@ -1383,11 +1371,10 @@ const renderManageLayersPage = () => {
                                   (grade) => (
                                     <button
                                       key={grade}
-                                      className={`w-full flex items-center justify-between text-left px-5 py-2 rounded-xl transition-all duration-150 mb-1 last:mb-0 font-medium ${
-                                        selectedGrade === grade
+                                      className={`w-full flex items-center justify-between text-left px-5 py-2 rounded-xl transition-all duration-150 mb-1 last:mb-0 font-medium ${selectedGrade === grade
                                           ? "bg-blue-100 text-blue-700 shadow-inner"
                                           : "hover:bg-slate-100 text-slate-700"
-                                      }`}
+                                        }`}
                                       onClick={() => {
                                         setSelectedGrade(grade);
                                         setShowFilter(false);
@@ -1402,9 +1389,8 @@ const renderManageLayersPage = () => {
                           </div>
 
                           <button
-                            className={`flex items-center justify-center text-sm font-bold border-2 border-slate-200 rounded-full w-10 h-10 transition-all duration-200 hover:scale-105 active:scale-95 z-50 ${
-                              sortOrder === "A-Z" ? "text-gray-700" : "text-slate-600"
-                            }`}
+                            className={`flex items-center justify-center text-sm font-bold border-2 border-slate-200 rounded-full w-10 h-10 transition-all duration-200 hover:scale-105 active:scale-95 z-50 ${sortOrder === "A-Z" ? "text-gray-700" : "text-slate-600"
+                              }`}
                             aria-label="Sort"
                             onClick={() =>
                               setSortOrder(sortOrder === "A-Z" ? "Z-A" : "A-Z")
@@ -1422,11 +1408,10 @@ const renderManageLayersPage = () => {
                       <div className="relative">
                         <button
                           onClick={() => setShowFilter(!showFilter)}
-                          className={`flex items-center justify-center text-sm border-2 rounded-full w-10 h-10 transition-all duration-200 hover:scale-105 active:scale-95 z-50 ${
-                            showFilter
+                          className={`flex items-center justify-center text-sm border-2 rounded-full w-10 h-10 transition-all duration-200 hover:scale-105 active:scale-95 z-50 ${showFilter
                               ? "border-gray-500 bg-gray-50 text-gray-600"
                               : "border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300"
-                          }`}
+                            }`}
                           aria-label="Open filter"
                         >
                           <svg
@@ -1450,11 +1435,10 @@ const renderManageLayersPage = () => {
                               (grade) => (
                                 <button
                                   key={grade}
-                                  className={`w-full flex items-center justify-between text-left px-5 py-2 rounded-xl transition-all duration-150 mb-1 last:mb-0 font-medium ${
-                                    selectedGrade === grade
+                                  className={`w-full flex items-center justify-between text-left px-5 py-2 rounded-xl transition-all duration-150 mb-1 last:mb-0 font-medium ${selectedGrade === grade
                                       ? "bg-blue-100 text-blue-700 shadow-inner"
                                       : "hover:bg-slate-100 text-slate-700"
-                                  }`}
+                                    }`}
                                   onClick={() => {
                                     setSelectedGrade(grade);
                                     setShowFilter(false);
@@ -1469,9 +1453,8 @@ const renderManageLayersPage = () => {
                       </div>
 
                       <button
-                        className={`flex items-center justify-center text-sm font-semibold border-2 border-slate-200 rounded-full w-10 h-10 transition-all duration-200 hover:scale-105 active:scale-95 z-50 ${
-                          sortOrder === "A-Z" ? "text-gray-700" : "text-slate-600"
-                        }`}
+                        className={`flex items-center justify-center text-sm font-semibold border-2 border-slate-200 rounded-full w-10 h-10 transition-all duration-200 hover:scale-105 active:scale-95 z-50 ${sortOrder === "A-Z" ? "text-gray-700" : "text-slate-600"
+                          }`}
                         aria-label="Sort"
                         onClick={() =>
                           setSortOrder(sortOrder === "A-Z" ? "Z-A" : "A-Z")
@@ -1493,22 +1476,20 @@ const renderManageLayersPage = () => {
                   {filteredOptions.map((item, index) => (
                     <div
                       key={item._id || index}
-                      className={`group relative rounded-2xl border-2 p-3 cursor-pointer transition-all duration-300 ease-out transform hover:scale-105 hover:-translate-y-1 ${
-                        selected.name === item.name
+                      className={`group relative rounded-2xl border-2 p-3 cursor-pointer transition-all duration-300 ease-out transform hover:scale-105 hover:-translate-y-1 ${selected.name === item.name
                           ? "border-blue-500 bg-blue-50 shadow-lg shadow-blue-200/50"
                           : "border-slate-200 hover:border-slate-300 hover:shadow-lg"
-                      } ${isMounted ? `opacity-100 translate-y-0` : "opacity-0 translate-y-4"}`}
+                        } ${isMounted ? `opacity-100 translate-y-0` : "opacity-0 translate-y-4"}`}
                       onClick={() => setSelected(item)}
                       onMouseEnter={() => setHoveredIndex(index)}
                       onMouseLeave={() => setHoveredIndex(null)}
                     >
                       {/* 3-dot menu */}
                       <button
-                        className={`absolute top-[0.7rem] right-[0.7rem] z-10 p-1 rounded-full transition-all duration-200 ${
-                          activeMenuIndex === index || hoveredIndex === index
+                        className={`absolute top-[0.7rem] right-[0.7rem] z-10 p-1 rounded-full transition-all duration-200 ${activeMenuIndex === index || hoveredIndex === index
                             ? "opacity-100 bg-white/80 hover:bg-white"
                             : "opacity-0 group-hover:opacity-100 bg-white/50"
-                        }`}
+                          }`}
                         onClick={(e) => handleMenuClick(index, e)}
                       >
                         <svg
@@ -1574,13 +1555,11 @@ const renderManageLayersPage = () => {
 
                       {/* Swatch */}
                       <div
-                        className={`w-full h-16 rounded-xl shadow-inner border border-slate-200/50 transition-all duration-300 ${
-                          hoveredIndex === index ? "shadow-md scale-105" : ""
-                        } ${
-                          selected.name === item.name
+                        className={`w-full h-16 rounded-xl shadow-inner border border-slate-200/50 transition-all duration-300 ${hoveredIndex === index ? "shadow-md scale-105" : ""
+                          } ${selected.name === item.name
                             ? "ring-2 ring-blue-400 ring-offset-2"
                             : ""
-                        }`}
+                          }`}
                         style={{ backgroundColor: item.color }}
                       >
                         <div className="w-full h-full rounded-xl bg-gradient-to-br from-white/20 via-transparent to-black/10"></div>
@@ -1588,13 +1567,12 @@ const renderManageLayersPage = () => {
 
                       <p
                         title={item.name}
-                        className={`text-xs mt-3 font-medium leading-tight transition-colors duration-200 line-clamp-2 ${
-                          selected.name === item.name
+                        className={`text-xs mt-3 font-medium leading-tight transition-colors duration-200 line-clamp-2 ${selected.name === item.name
                             ? "text-blue-700"
                             : hoveredIndex === index
-                            ? "text-slate-800"
-                            : "text-slate-600"
-                        }`}
+                              ? "text-slate-800"
+                              : "text-slate-600"
+                          }`}
                       >
                         {item.name}
                       </p>

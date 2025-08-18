@@ -50,7 +50,7 @@ export default function SharePopup({ isOpen, onClose, url }) {
           />
           <button
             onClick={handleCopy}
-            className={"px-4 py-2 bg-white/10 text-white border border-white/30 rounded-md  mb-2 text-center mt-1 transition" }
+            className={"px-4 py-2 bg-white/10 text-white border border-white/30 rounded-md  mb-2 text-center mt-1 transition"}
             disabled={copied}
           >
             {copied ? 'Link Copied!' : 'Copy Link'}

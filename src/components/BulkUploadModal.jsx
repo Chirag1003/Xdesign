@@ -318,8 +318,8 @@ export default function BulkUploadModal({ open, onClose, onUpload }) {
                     done
                       ? "bg-green-500 text-white"
                       : active
-                      ? "bg-blue-600 text-white"
-                      : "bg-slate-200 text-slate-700",
+                        ? "bg-blue-600 text-white"
+                        : "bg-slate-200 text-slate-700",
                   ].join(" ")}
                 >
                   {done ? "✓" : s.n}
@@ -583,29 +583,29 @@ export default function BulkUploadModal({ open, onClose, onUpload }) {
   );
 
   // ---------- Render ----------
-return (
-  <div className="fixed inset-0 z-[10000] bg-black/40 flex items-center justify-center">
-    <div className="w-full max-w-5xl max-h-[90vh] bg-white rounded-2xl shadow-xl border border-slate-200 flex flex-col overflow-hidden">
-      
-      {/* Stepper (fixed header) */}
-      <Stepper />
+  return (
+    <div className="fixed inset-0 z-[10000] bg-black/40 flex items-center justify-center">
+      <div className="w-full max-w-5xl max-h-[90vh] bg-white rounded-2xl shadow-xl border border-slate-200 flex flex-col overflow-hidden">
 
-      {/* Scrollable body */}
-      <div className="flex-1 overflow-y-auto">
-        {step === 1 && <Step1 />}
-        {step === 2 && <Step2 />}
-        {step === 3 && <Step3 />}
-        {step === 4 && <Step4 />}
+        {/* Stepper (fixed header) */}
+        <Stepper />
+
+        {/* Scrollable body */}
+        <div className="flex-1 overflow-y-auto">
+          {step === 1 && <Step1 />}
+          {step === 2 && <Step2 />}
+          {step === 3 && <Step3 />}
+          {step === 4 && <Step4 />}
+        </div>
+
+        {/* Footer (fixed bottom) */}
+        {step === 1 && <Footer primaryText="Continue" onPrimary={next} />}
+        {step === 2 && <Footer primaryText="Continue" onPrimary={next} />}
+        {step === 3 && <Footer primaryText="Upload" onPrimary={next} />}
+        {step === 4 && <Footer primaryText="Done" onPrimary={onClose} />}
       </div>
-
-      {/* Footer (fixed bottom) */}
-      {step === 1 && <Footer primaryText="Continue" onPrimary={next} />}
-      {step === 2 && <Footer primaryText="Continue" onPrimary={next} />}
-      {step === 3 && <Footer primaryText="Upload" onPrimary={next} />}
-      {step === 4 && <Footer primaryText="Done" onPrimary={onClose} />}
     </div>
-  </div>
-);
+  );
 
 }
 

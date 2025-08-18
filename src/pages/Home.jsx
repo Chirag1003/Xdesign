@@ -33,13 +33,10 @@ export default function Home() {
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   const [showUnsavedModal, setShowUnsavedModal] = useState(false);
   const [fullPreview, setFullPreview] = useState(false); // New state for full preview
+
   const handleClose = () => setShowUnsavedModal(false);
 
   const showToast = (title, description = '', type = 'success') => setToast({ title, description, type });
-
-  // const handleDownloadPDF = () => {
-  //   showToast("PDF download started ", "PDF download initiated for demonstration.");
-  // };
 
   const handleDownloadImage = () => {
     showToast("Image download started ", "Image download initiated for demonstration.");
@@ -72,15 +69,7 @@ export default function Home() {
     setTileSelected(false);
     setAutoFocusOn(false);
     setUnsavedChanges(false);
-  }; // Do not reset hasEngagedWithDesign here, it should persist until a full app reset (e.g., page refresh)
-
-  // const handleHomeClose = () => {
-  //   if (unsavedChanges) {
-  //     setShowUnsavedModal(true);
-  //   } else {
-  //     resetToHomeScreen();
-  //   }
-  // };
+  }; 
 
   const handleSaveAndClose = () => {
     setShowUnsavedModal(false);
@@ -120,52 +109,49 @@ export default function Home() {
     }
   };
 
-  // const toggleFullPreview = () => {
-  //   setFullPreview(!fullPreview);
-  // };
-const toggleFullPreview = () => {
-  if (!fullPreview) {
-    // Enter fullscreen
-    document.documentElement.requestFullscreen?.().catch(e => {
-      console.error("Fullscreen error:", e);
-    });
-  } else {
-    // Exit fullscreen
-    document.exitFullscreen?.();
-  }
-  setFullPreview(!fullPreview);
-};
+  const toggleFullPreview = () => {
+    if (!fullPreview) {
+      // Enter fullscreen
+      document.documentElement.requestFullscreen?.().catch(e => {
+        console.error("Fullscreen error:", e);
+      });
+    } else {
+      // Exit fullscreen
+      document.exitFullscreen?.();
+    }
+    setFullPreview(!fullPreview);
+  };
   return (
     <div className={`relative w-full h-screen bg-white ${fullPreview ? 'overflow-hidden' : ''}`}>
       {/* Full Preview Mode */}
-     {fullPreview && (
-  <div className="fixed inset-0 z-50 bg-black flex flex-col">
-    {/* Remove the header div completely to eliminate black border */}
-    <div className="flex-1 flex items-center justify-center p-0"> {/* Changed p-4 to p-0 */}
-      <img
-        src="https://images.pexels.com/photos/1080721/pexels-photo-1080721.jpeg"
-        alt="Kitchen preview"
-        className="w-full h-full object-contain"
-      />
-    </div>
-    {/* Floating close button */}
-    <button
-      onClick={toggleFullPreview}
-      className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 p-2 rounded-full transition z-10"
-      title="Exit Full Preview"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-6 w-6 text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </button>
-  </div>
-)}
+      {fullPreview && (
+        <div className="fixed inset-0 z-50 bg-black flex flex-col">
+          {/* Remove the header div completely to eliminate black border */}
+          <div className="flex-1 flex items-center justify-center p-0"> {/* Changed p-4 to p-0 */}
+            <img
+              src="https://images.pexels.com/photos/1080721/pexels-photo-1080721.jpeg"
+              alt="Kitchen preview"
+              className="w-full h-full object-contain"
+            />
+          </div>
+          {/* Floating close button */}
+          <button
+            onClick={toggleFullPreview}
+            className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 p-2 rounded-full transition z-10"
+            title="Exit Full Preview"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
 
       {/* Normal View */}
       {!fullPreview && (
@@ -178,8 +164,8 @@ const toggleFullPreview = () => {
 
           {/* Zoom Controls above Biorev branding logo (right side) */}
           <div className="absolute bottom-32 right-8 flex flex-col items-center gap-3 z-50">
-            
-             <button className="bg-[#00000047] backdrop-blur-md border border-white rounded-full p-2 shadow-lg hover:bg-white/20 transition-all duration-200" title="Zoom In">
+
+            <button className="bg-[#00000047] backdrop-blur-md border border-white rounded-full p-2 shadow-lg hover:bg-white/20 transition-all duration-200" title="Zoom In">
               {/* New Zoom In Icon: Magnifying glass with plus */}
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2" fill="none" />
@@ -197,7 +183,7 @@ const toggleFullPreview = () => {
                 <line x1="16" y1="16" x2="21" y2="21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </button>
-            
+
             {/* Reset */}
             <button className="bg-[#00000047] backdrop-blur-md border border-white rounded-full p-2 shadow-lg hover:bg-white/20 transition-all duration-200" title="Reset Zoom">
               {/* Updated Reset Icon: Refresh arrow */}
@@ -207,7 +193,6 @@ const toggleFullPreview = () => {
               </svg>
             </button>
           </div>
-
           {/* Edit Kitchen button (normal mode) */}
           {!showTiles && (
             <button
@@ -231,56 +216,51 @@ const toggleFullPreview = () => {
               Edit
             </button>
           )}
-
-          {/* Back button (edit mode) */}
-          
-
           {/* Show cross and Save Kitchen buttons only in edit mode */}
           {showTiles && (
-            <>
-              {/* Removed close button functionality as per request */}
-          {/* Back and Save Kitchen buttons side by side */}
-          <div className="absolute bottom-6 left-8 flex items-center gap-4 z-40">
-            {/* Back button now shows unsaved changes modal if there are unsaved changes */}
-            <button
-              onClick={() => {
-                if (unsavedChanges) {
-                  setShowUnsavedModal(true);
-                } else {
-                  resetToHomeScreen();
-                }
-              }}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
-              title="Back"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
-              Back
-            </button>
-            {/* Save Kitchen button: only show if unsavedChanges is true */}
-            {unsavedChanges && (
-              <button
-                onClick={handleSaveBathroom}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
-                title="Save Kitchen"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-white"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
+            <>             
+              {/* Back and Save Kitchen buttons side by side */}
+              <div className="absolute bottom-6 left-8 flex items-center gap-4 z-40">
+                {/* Back button now shows unsaved changes modal if there are unsaved changes */}
+                <button
+                  onClick={() => {
+                    if (unsavedChanges) {
+                      setShowUnsavedModal(true);
+                    } else {
+                      resetToHomeScreen();
+                    }
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
+                  title="Back"
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414L8.414 15l-4.121-4.121a1 1 0 011.414-1.414L8.414 12.172l7.293-7.293a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Save Kitchen
-              </button>
-            )}
-          </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Back
+                </button>
+                {/* Save Kitchen button: only show if unsavedChanges is true */}
+                {unsavedChanges && (
+                  <button
+                    onClick={handleSaveBathroom}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-base border border-white bg-[#00000047] backdrop-blur-md shadow-lg hover:backdrop-blur-xl hover:bg-white/20 transition-all duration-200"
+                    title="Save Kitchen"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-white"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414L8.414 15l-4.121-4.121a1 1 0 011.414-1.414L8.414 12.172l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Save Kitchen
+                  </button>
+                )}
+              </div>
             </>
           )}
 
@@ -321,12 +301,12 @@ const toggleFullPreview = () => {
                   </svg>
                   Share
                 </button>
-      {/* Share Popup Modal */}
-      <SharePopup
-        isOpen={showSharePopup}
-        onClose={() => setShowSharePopup(false)}
-        url={window.location.href}
-      />
+                {/* Share Popup Modal */}
+                <SharePopup
+                  isOpen={showSharePopup}
+                  onClose={() => setShowSharePopup(false)}
+                  url={window.location.href}
+                />
                 {showDownload && (
                   <button
                     onClick={handleDownloadImage}
@@ -426,7 +406,7 @@ const toggleFullPreview = () => {
                 </button>
               </>
             )}
-            
+
             {/* After confirming selection: Undo/Redo visible, also show Preview and Inquiry, and Focus if a tile is selected */}
             {showUndoRedo && (
               <>
@@ -506,18 +486,16 @@ const toggleFullPreview = () => {
                 className="w-32 opacity-90 rounded" />
             </div>
           )}
- <div className="absolute bottom-6 right-2 bg-[#00000047] px-4 py-2 rounded-lg shadow border border-white/20 backdrop-blur-sm flex items-center gap-2 text-white text-xs">
- {/* <img src={timber}
-   alt="Powered by Biorev Studio"
-   className="w-28 opacity-90 rounded" /> */}
- <span className="font-medium whitespace-nowrap">Designed by</span>
+          <div className="absolute bottom-6 right-2 bg-[#00000047] px-4 py-2 rounded-lg shadow border border-white/20 backdrop-blur-sm flex items-center gap-2 text-white text-xs">
+      
+            <span className="font-medium whitespace-nowrap">Designed by</span>
 
- <img
-   src={removed}
-   alt="Powered by Biorev Studio"
-   className="w-24 opacity-90 rounded"
- />
-</div>
+            <img
+              src={removed}
+              alt="Powered by Biorev Studio"
+              className="w-24 opacity-90 rounded"
+            />
+          </div>
 
           {/* Conditional tile panel */}
           {showTiles && <TilePanel onClose={() => setShowTiles(false)} showToast={showToast} onLayerConfirmed={handleLayerConfirmed} onTileSelected={handleTileSelected} onTileCancel={() => setTileSelected(false)} />}
@@ -580,8 +558,8 @@ const toggleFullPreview = () => {
       {showHelp && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="relative bg-[#00000047] backdrop-blur-xl text-white rounded-2xl shadow-2xl border border-white/30 p-6 w-[22rem]">
-            <button 
-              onClick={() => setShowHelp(false)} 
+            <button
+              onClick={() => setShowHelp(false)}
               className="absolute top-3 right-3 text-white hover:text-red-300 transition"
               title="Close"
             >
@@ -593,8 +571,8 @@ const toggleFullPreview = () => {
             <p className="text-sm text-white/90">
               For assistance, contact us at <a href="mailto:support@example.com" className="underline text-blue-200 hover:text-blue-300 font-semibold">biorev@studio.com</a> or use the inquiry form.
             </p>
-            <button 
-              onClick={() => setShowHelp(false)} 
+            <button
+              onClick={() => setShowHelp(false)}
               className="mt-6 w-full py-2 rounded-xl bg-blue-600 hover:bg-blue-700 transition font-semibold"
             >
               Close

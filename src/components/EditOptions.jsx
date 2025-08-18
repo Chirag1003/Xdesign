@@ -5,10 +5,10 @@ import SelectionModal from "./SelectionModal";
 export default function EditOptions({ room }) {
   const [activeOption, setActiveOption] = useState(null);
 
- const handleClick = (optionType) => {
-  console.log("Clicked:", optionType);
-  setActiveOption(optionType);
-};
+  const handleClick = (optionType) => {
+    console.log("Clicked:", optionType);
+    setActiveOption(optionType);
+  };
 
 
   return (
