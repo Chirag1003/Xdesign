@@ -40,7 +40,6 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
   const [editValue, setEditValue] = useState("");
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [dropIndex, setDropIndex] = useState(null);
-  // const [editImage, setEditImage] = useState(null);
   const tilesContainerRef = useRef(null);
   const editingRef = useRef(null);
   const originalEditLabel = useRef("");
@@ -72,7 +71,7 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
     const scrollSpeed = 10;
     const scrollThreshold = 0.2;
 
-    const handleDragOver = (e) => {
+    const handleDragOverAuto = (e) => {
       const rect = container.getBoundingClientRect();
       const yPos = e.clientY - rect.top;
       const height = rect.height;
@@ -89,17 +88,17 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
       if (scrollInterval) clearInterval(scrollInterval);
     };
 
-    container.addEventListener("dragover", handleDragOver);
+    container.addEventListener("dragover", handleDragOverAuto);
     document.addEventListener("dragend", handleDragEnd);
 
     return () => {
       if (scrollInterval) clearInterval(scrollInterval);
-      container.removeEventListener("dragover", handleDragOver);
+      container.removeEventListener("dragover", handleDragOverAuto);
       document.removeEventListener("dragend", handleDragEnd);
     };
   }, [draggedIndex]);
 
-  // drag handlers (keep drag only on schemes)
+  // drag handlers (drag ONLY in schemes)
   const handleDragStart = (e, index) => {
     if (stage !== "schemes") return;
     e.dataTransfer.setData("text/plain", index.toString());
@@ -150,7 +149,7 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
 
   // edit handlers (ALLOW EDIT ONLY IN CATEGORIES STAGE)
   const handleEditStart = (index) => {
-    if (stage !== "categories") return; // hard-stop editing in schemes
+    if (stage !== "categories") return; // no editing in schemes
     setEditingIndex(index);
     if (index === "header") {
       setEditLabel(headerTitle);
@@ -236,7 +235,7 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
           isMounted ? "translate-x-4 opacity-100" : "-translate-x-full opacity-0"
         }`}
       >
-        {/* Header (NO back button in categories, as requested) */}
+        {/* Header (no back button) */}
         <div
           className={`group relative bg-white text-slate-800 font-bold text-base rounded-2xl text-center shadow-lg border-2 border-slate-200 backdrop-blur-sm py-2 w-[270px] transition-all duration-500 ${
             isMounted ? "scale-100 opacity-100" : "scale-95 opacity-0"
@@ -302,7 +301,7 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
           )}
         </div>
 
-        {/* Tiles container */}
+        {/* Tiles list */}
         <div
           className="max-h-[64vh] overflow-y-auto scrollbar-hide pr-2 snap-y snap-mandatory"
           ref={tilesContainerRef}
@@ -310,7 +309,7 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
           {designOptions.map((item, index) => (
             <div
               key={`${item.label}-${index}`}
-              draggable={stage === "schemes"} // drag only on schemes
+              draggable={stage === "schemes"}
               onDragStart={(e) => handleDragStart(e, index)}
               onDragOver={(e) => handleDragOver(e, index)}
               onDrop={(e) => handleDrop(e, index)}
@@ -386,7 +385,9 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
                               const file = e.target.files[0];
                               if (file) {
                                 const reader = new FileReader();
-                                // reader.onload = (ev) => setEditImage(ev.target.result);
+                                reader.onload = () => {
+                                  /* You can store image data in your state if needed */
+                                };
                                 reader.readAsDataURL(file);
                               }
                             }}
@@ -495,16 +496,55 @@ const TilePanel = ({ showToast, onLayerConfirmed, onTileSelected, onTileCancel }
             </div>
           ))}
 
-          {/* Add New Option (only in schemes stage) */}
-          {stage === "schemes" && (
+          {/* Add New Option (ONLY in categories stage) */}
+          {stage === "categories" && (
             <div
               className="relative bg-white/95 backdrop-blur-sm border-2 border-dashed border-slate-300 rounded-2xl shadow-md cursor-pointer hover:shadow-lg hover:border-blue-400 transition-all p-4 text-center"
               onClick={() => {
                 if (editingIndex !== "new") handleEditStart("new");
               }}
             >
-              {/* This won't open because handleEditStart guards stage !== 'categories'. */}
-              <span className="text-slate-400 font-semibold">+ Add New Option</span>
+              {editingIndex === "new" ? (
+                <div ref={editingRef} className="flex flex-col gap-2 items-center">
+                  <input
+                    className="w-full text-sm px-2 py-1 rounded bg-white border font-bold text-slate-800"
+                    placeholder="Enter label"
+                    value={editLabel}
+                    onChange={(e) => setEditLabel(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    autoFocus
+                  />
+                  <input
+                    className="w-full text-xs px-2 py-1 rounded bg-white border text-slate-600"
+                    placeholder="Enter value"
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                  />
+                  <div className="flex gap-2 mt-1">
+                    <button
+                      className="px-3 py-1 text-xs bg-blue-500 text-white rounded"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditSave();
+                      }}
+                    >
+                      Save
+                    </button>
+                    <button
+                      className="px-3 py-1 text-xs bg-gray-300 rounded"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditCancel();
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <span className="text-slate-400 font-semibold">+ Add New Option</span>
+              )}
             </div>
           )}
         </div>
