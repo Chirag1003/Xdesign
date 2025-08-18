@@ -834,7 +834,7 @@ export default function MaterialPanel({
           <div className="flex items-center justify-between px-5 pt-4">
             <h3 className="text-xl font-semibold flex items-center gap-2">
               Manage Layer <span className="text-slate-400">-</span>
-              <span className="text-blue-600 font-bold">Door</span>
+              <span className="text-blue-600 font-bold">Cabinet</span>
             </h3>
 
             {/* 🔹 Edit toggle + Save Changes */}
