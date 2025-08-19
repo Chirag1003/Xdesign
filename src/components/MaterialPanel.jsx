@@ -482,7 +482,7 @@ export default function MaterialPanel({
      Add New (existing UI)
      =========================== */
   const renderAddNewColor = () => (
-    <div className="overflow-y-auto scrollbar-hide p-2" style={{ maxHeight: "590px" }}>
+    <div className="overflow-y-auto scrollbar-hide p-2" style={{ maxHeight: "600px" }}>
       <div className="space-y-4 mt-2 animate-fade-in">
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">
@@ -693,7 +693,7 @@ export default function MaterialPanel({
     showGoogleSearch ? (
       renderGoogleSearchPanel()
     ) : (
-      <div className="overflow-y-auto scrollbar-hide p-2" style={{ maxHeight: editMode ? "590px" : "380px" }}>
+      <div className="overflow-y-auto scrollbar-hide p-2" style={{ maxHeight: editMode ? "590px" : "390px" }}>
         <div className="space-y-4 mt-2 animate-fade-in">
           <div className="space-y-4">
             <div>
@@ -1249,7 +1249,7 @@ export default function MaterialPanel({
         >
           {/* MAIN MODE */}
           {!showGoogleSearch && !(editMode && itemToEdit) && !showAddNew && (
-            <div className="p-4 pb-24 flex flex-col gap-4">
+            <div className="p-4 pb-24 flex flex-col gap-3">
               {/* Selection Header */}
               <div
                 className={`flex items-center gap-4 relative p-4 border-2 rounded-2xl shadow-lg bg-gradient-to-r from-slate-50 to-white border-slate-200 transform transition-all duration-500 delay-200 ${isMounted
@@ -1491,7 +1491,7 @@ export default function MaterialPanel({
               {/* Grid */}
               <div
                 className="overflow-y-auto scrollbar-hide p-2 "
-                style={{ maxHeight: "383px" }}
+                style={{ maxHeight: "388px" }}
               >
                 <div className="grid grid-cols-3 gap-4 relative z-0">
                   {filteredOptions.map((item, index) => (
