@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import BulkUploadModal from "./BulkUploadModal";
+import Library from './Library';
+import LibraryModal from "./LibraryModal";
 
 /* ===========================
    EditTabs (unchanged logic)
@@ -182,7 +184,24 @@ export default function MaterialPanel({
   const [newName, setNewName] = useState("");
   const [newImage, setNewImage] = useState(null);
   const [newTab, setNewTab] = useState("Color");
-
+  const [layers, setLayers] = useState([
+    {
+      name: "Wall Paint",
+      productCode: "WP-101",
+      manufacturer: "Asian Paints",
+      color: "#ffcc00",
+      designType: "Paint",
+      option: "Glossy",
+    },
+    {
+      name: "Floor Tile",
+      productCode: "FT-202",
+      manufacturer: "Kajaria",
+      color: "#ffffff",
+      designType: "Tile",
+      option: "Matte",
+    },
+  ]);
   const [selected, setSelected] = useState(initialCabinetOptions[0]);
   const [showSearch, setShowSearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -213,6 +232,8 @@ export default function MaterialPanel({
   // ===== NEW: bulk edit panel =====
   const [showBulkEdit, setShowBulkEdit] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [showLibraryModal, setShowLibraryModal] = useState(false);
+  const [showFullLibraryModal, setShowFullLibraryModal] = useState(false);
 
 
   // const anySelected = selectedIds.size > 0;
@@ -388,7 +409,7 @@ export default function MaterialPanel({
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 13.414V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-4.586a1 1 0 00-.293-.707L2.293 6.707A1 1 0 012 6V4z"
+                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 13.414V19a1 1 0 01-1.447.894l-2-1A1 1 0 009 18v-4.586a1 1 0 00-.293-.707L2.293 6.707A1 1 0 012 6V4z"
                 />
               </svg>
               <span className="text-sm font-semibold text-slate-700 mr-1">
@@ -749,7 +770,7 @@ export default function MaterialPanel({
             </div>
           </div>
         </div>
-      </div>
+        </div>
     );
 
   /* ===========================
@@ -971,7 +992,7 @@ export default function MaterialPanel({
                     <th className="p-3 text-left">Product Code</th>
                     <th className="p-3 text-left">Manufacturer</th>
                     <th className="p-3 text-left">Hex</th>
-                    <th className="p-3 text-left">Grade</th>
+                    {/* <th className="p-3 text-left">Grade</th> */}
                     <th className="p-3 text-left">Design Type</th>
                     <th className="p-3 text-left">Option</th>
                     <th className="p-3 text-left">Action</th>
@@ -1099,7 +1120,7 @@ export default function MaterialPanel({
                         )}
                       </td>
 
-                      <td className="p-3">
+                      {/* <td className="p-3">
                         {showBulkEdit ? (
                           <input
                             className="border rounded px-2 py-1 w-full text-sm"
@@ -1116,7 +1137,7 @@ export default function MaterialPanel({
                         ) : (
                           r.grade
                         )}
-                      </td>
+                      </td> */}
 
                       {/* Read only fields */}
                       <td className="p-3">
@@ -1360,7 +1381,7 @@ export default function MaterialPanel({
                                 <path
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
-                                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 13.414V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-4.586a1 1 0 00-.293-.707L2.293 6.707A1 1 0 012 6V4z"
+                                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 13.414V19a1 1 0 01-1.447.894l-2-1A1 1 0 009 18v-4.586a1 1 0 00-.293-.707L2.293 6.707A1 1 0 012 6V4z"
                                 />
                               </svg>
                             </button>
@@ -1425,7 +1446,7 @@ export default function MaterialPanel({
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
-                              d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 13.414V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-4.586a1 1 0 00-.293-.707L2.293 6.707A1 1 0 012 6V4z"
+                              d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 13.414V19a1 1 0 01-1.447.894l-2-1A1 1 0 009 18v-4.586a1 1 0 00-.293-.707L2.293 6.707A1 1 0 012 6V4z"
                             />
                           </svg>
                         </button>
@@ -1512,7 +1533,7 @@ export default function MaterialPanel({
                               className="flex items-center justify-center p-1.5 text-gray-700 hover:bg-gray-100 transition-colors duration-200"
                               onClick={(e) => handleEdit(item, e)}
                               title="Edit"
-                            >
+                                                       >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="w-4 h-4"
@@ -1582,7 +1603,7 @@ export default function MaterialPanel({
                   {/* Add New Layer tile */}
                   <div
                     className="group relative rounded-2xl border-2 p-3 cursor-pointer transition-all duration-300 ease-out transform hover:scale-105 hover:-translate-y-1 border-dashed border-blue-400 bg-blue-50 flex flex-col items-center justify-center"
-                    onClick={() => setShowAddNew(true)}
+                    onClick={() => setShowLibraryModal(true)}
                     style={{ minHeight: "110px" }}
                   >
                     <div className="w-full h-16 rounded-xl flex items-center justify-center bg-gradient-to-br from-white/20 via-transparent to-blue-100">
@@ -1788,6 +1809,36 @@ export default function MaterialPanel({
               </div>
             )}
           </div>
+
+{showLibraryModal && (
+  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999]">
+    <Library
+      open={true}
+      onClose={() => setShowLibraryModal(false)}
+      onSelect={(type) => {
+        if (type === "new") {
+          setShowAddNew(true);   // ✅ Add New Layer form खोल दो
+          setShowLibraryModal(false);
+        } else if (type === "google") {
+          setShowGoogleSearch(true); // ✅ Directly Google search panel खोल दो
+          setShowLibraryModal(false);
+        } else if (type === "library") {
+          // ✅ छोटा modal बंद करो और बड़ा वाला खोलो
+          setShowLibraryModal(false);
+          setShowFullLibraryModal(true);
+        }
+      }}
+    />
+  </div>
+)}
+
+{showFullLibraryModal && (
+  <LibraryModal
+    open={true}
+    onClose={() => setShowFullLibraryModal(false)}
+    layers={initialCabinetOptions} // ✅ MaterialPanel से आने वाले layers pass करो
+  />
+)}
         </div>
       )}
     </>

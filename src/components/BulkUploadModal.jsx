@@ -1,6 +1,6 @@
 // BulkUploadModal.jsx
 import React, { useEffect, useRef, useState } from "react";
-
+import { createPortal } from "react-dom";
 /**
  * Props:
  *  - open: boolean
@@ -583,7 +583,7 @@ export default function BulkUploadModal({ open, onClose, onUpload }) {
   );
 
   // ---------- Render ----------
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[10000] bg-black/40 flex items-center justify-center">
       <div className="w-full max-w-5xl max-h-[90vh] bg-white rounded-2xl shadow-xl border border-slate-200 flex flex-col overflow-hidden">
 
@@ -630,6 +630,7 @@ function MappingRow({ label, headers = [], value, onChange, isLast }) {
           ))}
         </select>
       </div>
-    </>
+    </>,
+  document.body
   );
 }
