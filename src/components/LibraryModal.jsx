@@ -65,7 +65,7 @@ export default function LibraryModal({
     const remaining = localLayers.filter((_, idx) => !selected.includes(idx));
     setLocalLayers(remaining);
 
-    showToast("Selected layer(s) deleted", "success");
+    
   }
   setSelected([]);
 };
@@ -77,7 +77,7 @@ const deleteRow = (idx) => {
     setLocalLayers(remaining);
     setSelected((prev) => prev.filter((i) => i !== idx));
 
-    showToast("Layer deleted", "success");
+ 
   }
 };
 
@@ -102,11 +102,7 @@ const deleteRow = (idx) => {
       (l) => !existingCodes.has(l.productCode)
     );
 
-    if (newOnes.length > 0) {
-      showToast(`${newOnes.length} layer(s) added to local library successfully`, "success");
-    } else {
-      showToast("Selected layers already exist in local library", "error");
-    }
+   
 
     return [...prev, ...newOnes];
   });
@@ -289,7 +285,7 @@ const deleteRow = (idx) => {
               </select>
 
               {/* Manufacturer Dropdown */}
-              <select className="border rounded px-3 py-2 text-sm">
+              <select className="border border-r rounded px-3 py-2 text-sm">
                 <option value="">All Manufacturers</option>
                 {manufacturers.map((m, i) => (
                   <option key={i} value={m}>
