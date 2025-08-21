@@ -234,6 +234,8 @@ export default function MaterialPanel({
   const [hasChanges, setHasChanges] = useState(false);
   const [showLibraryModal, setShowLibraryModal] = useState(false);
   const [showFullLibraryModal, setShowFullLibraryModal] = useState(false);
+  const [newProductCode, setNewProductCode] = useState("");
+const [newManufacturer, setNewManufacturer] = useState("");
 
 
   // const anySelected = selectedIds.size > 0;
@@ -652,7 +654,7 @@ export default function MaterialPanel({
           <label className="block text-sm font-medium text-slate-700 mb-1">
             Product Code
           </label>
-          <input
+          {/* <input
             type="text"
             value={typeof window !== "undefined" ? window.newProductCode || "" : ""}
             onChange={(e) => {
@@ -660,27 +662,32 @@ export default function MaterialPanel({
             }}
             className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter product code"
-          />
+          /> */}
+          <input
+  type="text"
+  value={newProductCode}
+  onChange={(e) => setNewProductCode(e.target.value)}
+  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+  placeholder="Enter product code"
+/>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">
             Add a Manufacturer
           </label>
-          <select
-            value={typeof window !== "undefined" ? window.newManufacturer || "" : ""}
-            onChange={(e) => {
-              if (typeof window !== "undefined") window.newManufacturer = e.target.value;
-            }}
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Select Manufacturer</option>
-            <option value="Paints">Paints</option>
-            <option value="Sherwin Williams">Sherwin Williams</option>
-            <option value="Manufacturer 3">Manufacturer 3</option>
-            <option value="Manufacturer 4">Manufacturer 4</option>
-            <option value="Manufacturer 5">Manufacturer 5</option>
-          </select>
+        <select
+  value={newManufacturer}
+  onChange={(e) => setNewManufacturer(e.target.value)}
+  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+>
+  <option value="">Select Manufacturer</option>
+  <option value="Paints">Paints</option>
+  <option value="Sherwin Williams">Sherwin Williams</option>
+  <option value="Manufacturer 3">Manufacturer 3</option>
+  <option value="Manufacturer 4">Manufacturer 4</option>
+  <option value="Manufacturer 5">Manufacturer 5</option>
+</select>
         </div>
       </div>
     </div>
@@ -1712,9 +1719,9 @@ export default function MaterialPanel({
                       grade: "Custom",
                       image: newImage,
                       productCode:
-                        typeof window !== "undefined" ? window.newProductCode || "" : "",
+                        newProductCode,
                       manufacturer:
-                        typeof window !== "undefined" ? window.newManufacturer || "" : "",
+                        newManufacturer,
                       designType: "Color",
                       option: "Door",
                     };
@@ -1817,13 +1824,13 @@ export default function MaterialPanel({
       onClose={() => setShowLibraryModal(false)}
       onSelect={(type) => {
         if (type === "new") {
-          setShowAddNew(true);   // ✅ Add New Layer form खोल दो
+          setShowAddNew(true);   
           setShowLibraryModal(false);
         } else if (type === "google") {
-          setShowGoogleSearch(true); // ✅ Directly Google search panel खोल दो
+          setShowGoogleSearch(true); 
           setShowLibraryModal(false);
         } else if (type === "library") {
-          // ✅ छोटा modal बंद करो और बड़ा वाला खोलो
+        
           setShowLibraryModal(false);
           setShowFullLibraryModal(true);
         }
@@ -1836,7 +1843,7 @@ export default function MaterialPanel({
   <LibraryModal
     open={true}
     onClose={() => setShowFullLibraryModal(false)}
-    layers={initialCabinetOptions} // ✅ MaterialPanel से आने वाले layers pass करो
+    layers={initialCabinetOptions} 
   />
 )}
         </div>
